@@ -1,4 +1,5 @@
-import { useState } from "react";
+ import { useState } from "react";
+ import { ProductForm } from "@/components/forms/ProductForm";
 import { AdminLayout } from "@/components/layout/AdminLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -139,6 +140,7 @@ const statusLabels: Record<string, string> = {
 
 export default function Products() {
   const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
+   const [isFormOpen, setIsFormOpen] = useState(false);
 
   const toggleSelectAll = () => {
     if (selectedProducts.length === products.length) {
@@ -206,7 +208,7 @@ export default function Products() {
             <Download className="h-4 w-4" />
             Export
           </Button>
-          <Button className="gap-2">
+           <Button className="gap-2" onClick={() => setIsFormOpen(true)}>
             <Plus className="h-4 w-4" />
             Add Product
           </Button>
@@ -351,6 +353,8 @@ export default function Products() {
           </Button>
         </div>
       </div>
+
+     <ProductForm open={isFormOpen} onOpenChange={setIsFormOpen} />
     </AdminLayout>
   );
 }

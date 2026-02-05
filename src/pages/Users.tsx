@@ -1,4 +1,5 @@
-import { useState } from "react";
+ import { useState } from "react";
+ import { UserForm } from "@/components/forms/UserForm";
 import { AdminLayout } from "@/components/layout/AdminLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -158,6 +159,7 @@ const roleStyles: Record<string, string> = {
 export default function Users() {
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
   const [activeTab, setActiveTab] = useState("customers");
+   const [isFormOpen, setIsFormOpen] = useState(false);
 
   return (
     <AdminLayout
@@ -185,7 +187,7 @@ export default function Users() {
               <Download className="h-4 w-4" />
               Export
             </Button>
-            <Button className="gap-2">
+             <Button className="gap-2" onClick={() => setIsFormOpen(true)}>
               <UserPlus className="h-4 w-4" />
               {activeTab === "customers" ? "Add Customer" : "Add Admin"}
             </Button>
@@ -452,6 +454,8 @@ export default function Users() {
           </div>
         </TabsContent>
       </Tabs>
+
+     <UserForm open={isFormOpen} onOpenChange={setIsFormOpen} />
     </AdminLayout>
   );
 }

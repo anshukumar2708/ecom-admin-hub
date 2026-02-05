@@ -1,3 +1,5 @@
+ import { useState } from "react";
+ import { CouponForm } from "@/components/forms/CouponForm";
 import { AdminLayout } from "@/components/layout/AdminLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -127,6 +129,8 @@ const statusStyles: Record<string, string> = {
 };
 
 export default function Marketing() {
+   const [isCouponFormOpen, setIsCouponFormOpen] = useState(false);
+
   return (
     <AdminLayout
       title="Marketing"
@@ -204,7 +208,7 @@ export default function Marketing() {
               Banners
             </TabsTrigger>
           </TabsList>
-          <Button className="gap-2">
+           <Button className="gap-2" onClick={() => setIsCouponFormOpen(true)}>
             <Plus className="h-4 w-4" />
             Create New
           </Button>
@@ -404,6 +408,8 @@ export default function Marketing() {
           </div>
         </TabsContent>
       </Tabs>
+
+     <CouponForm open={isCouponFormOpen} onOpenChange={setIsCouponFormOpen} />
     </AdminLayout>
   );
 }
