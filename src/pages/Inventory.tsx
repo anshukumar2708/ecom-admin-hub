@@ -1,3 +1,5 @@
+ import { useState } from "react";
+ import { InventoryForm } from "@/components/forms/InventoryForm";
 import { AdminLayout } from "@/components/layout/AdminLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -109,6 +111,8 @@ const warehouses = [
 ];
 
 export default function Inventory() {
+   const [isFormOpen, setIsFormOpen] = useState(false);
+
   const getStockStatus = (available: number, reorderLevel: number) => {
     if (available === 0) return { label: "Out of Stock", style: "bg-destructive/10 text-destructive border-destructive/20" };
     if (available <= reorderLevel) return { label: "Low Stock", style: "bg-warning/10 text-warning border-warning/20" };
@@ -245,7 +249,7 @@ export default function Inventory() {
             <Download className="h-4 w-4" />
             Export
           </Button>
-          <Button className="gap-2">
+           <Button className="gap-2" onClick={() => setIsFormOpen(true)}>
             <Plus className="h-4 w-4" />
             Add Stock
           </Button>
@@ -327,6 +331,8 @@ export default function Inventory() {
           </Button>
         </div>
       </div>
+
+     <InventoryForm open={isFormOpen} onOpenChange={setIsFormOpen} />
     </AdminLayout>
   );
 }

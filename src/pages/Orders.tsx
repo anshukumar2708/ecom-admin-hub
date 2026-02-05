@@ -1,4 +1,5 @@
-import { useState } from "react";
+ import { useState } from "react";
+ import { OrderForm } from "@/components/forms/OrderForm";
 import { AdminLayout } from "@/components/layout/AdminLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -37,7 +38,8 @@ import {
   XCircle,
   RefreshCcw,
   Download,
-} from "lucide-react";
+ } from "lucide-react";
+ import { Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const orders = [
@@ -134,6 +136,7 @@ const paymentStyles: Record<string, string> = {
 export default function Orders() {
   const [selectedOrders, setSelectedOrders] = useState<string[]>([]);
   const [activeTab, setActiveTab] = useState("all");
+   const [isFormOpen, setIsFormOpen] = useState(false);
 
   const toggleSelectAll = () => {
     if (selectedOrders.length === orders.length) {
@@ -211,6 +214,10 @@ export default function Orders() {
           <Download className="h-4 w-4" />
           Export Orders
         </Button>
+       <Button className="gap-2" onClick={() => setIsFormOpen(true)}>
+         <Plus className="h-4 w-4" />
+         Create Order
+       </Button>
       </div>
 
       {/* Bulk Actions */}
@@ -356,6 +363,8 @@ export default function Orders() {
           </Button>
         </div>
       </div>
+
+     <OrderForm open={isFormOpen} onOpenChange={setIsFormOpen} />
     </AdminLayout>
   );
 }
