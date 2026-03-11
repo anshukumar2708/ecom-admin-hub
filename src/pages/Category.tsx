@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { AdminLayout } from "@/components/layout/AdminLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -40,138 +40,140 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { CategoryForm } from "@/components/forms/CategoryForm";
+import { deleteProductCategory, getProductCategory } from "@/services/productService";
+import { mediaUrl } from "@/utils/helper";
 
-const categories = [
-    {
-        id: "1",
-        name: "Dairy",
-        slug: "dairy",
-        description: "Milk, butter, cheese, curd and dairy products",
-        status: "active",
-        image: "https://images.immediate.co.uk/production/volatile/sites/30/2020/02/Glass-and-bottle-of-milk-fe0997a.jpg?quality=90&webp=true&resize=440,400",
-    },
-    {
-        id: "2",
-        name: "Grains",
-        slug: "grains",
-        description: "Rice, wheat, oats and grain products",
-        status: "active",
-        image: "https://images.immediate.co.uk/production/volatile/sites/30/2020/02/Glass-and-bottle-of-milk-fe0997a.jpg?quality=90&webp=true&resize=440,400",
-    },
-    {
-        id: "3",
-        name: "Pulses",
-        slug: "pulses",
-        description: "Dal, lentils and protein-rich pulses",
-        status: "active",
-        image: "https://images.immediate.co.uk/production/volatile/sites/30/2020/02/Glass-and-bottle-of-milk-fe0997a.jpg?quality=90&webp=true&resize=440,400",
-    },
-    {
-        id: "4",
-        name: "Oil",
-        slug: "oil",
-        description: "Cooking oil, olive oil and edible oils",
-        status: "active",
-        image: "https://images.immediate.co.uk/production/volatile/sites/30/2020/02/Glass-and-bottle-of-milk-fe0997a.jpg?quality=90&webp=true&resize=440,400",
-    },
-    {
-        id: "5",
-        name: "Spices",
-        slug: "spices",
-        description: "Masala, spices and seasoning products",
-        status: "active",
-        image: "https://images.immediate.co.uk/production/volatile/sites/30/2020/02/Glass-and-bottle-of-milk-fe0997a.jpg?quality=90&webp=true&resize=440,400",
-    },
-    {
-        id: "6",
-        name: "Vegetables",
-        slug: "vegetables",
-        description: "Fresh vegetables and greens",
-        status: "active",
-        image: "https://images.immediate.co.uk/production/volatile/sites/30/2020/02/Glass-and-bottle-of-milk-fe0997a.jpg?quality=90&webp=true&resize=440,400",
-    },
-    {
-        id: "7",
-        name: "Fruits",
-        slug: "fruits",
-        description: "Fresh fruits and seasonal fruits",
-        status: "active",
-        image: "https://images.immediate.co.uk/production/volatile/sites/30/2020/02/Glass-and-bottle-of-milk-fe0997a.jpg?quality=90&webp=true&resize=440,400",
-    },
-    {
-        id: "8",
-        name: "Meat",
-        slug: "meat",
-        description: "Chicken, mutton and fresh meat",
-        status: "active",
-        image: "https://images.immediate.co.uk/production/volatile/sites/30/2020/02/Glass-and-bottle-of-milk-fe0997a.jpg?quality=90&webp=true&resize=440,400",
-    },
-    {
-        id: "9",
-        name: "Eggs",
-        slug: "eggs",
-        description: "Farm fresh eggs and egg products",
-        status: "active",
-        image: "https://images.immediate.co.uk/production/volatile/sites/30/2020/02/Glass-and-bottle-of-milk-fe0997a.jpg?quality=90&webp=true&resize=440,400",
-    },
-    {
-        id: "10",
-        name: "Snacks",
-        slug: "snacks",
-        description: "Biscuits, chips and snack items",
-        status: "active",
-        image: "https://images.immediate.co.uk/production/volatile/sites/30/2020/02/Glass-and-bottle-of-milk-fe0997a.jpg?quality=90&webp=true&resize=440,400",
-    },
-    {
-        id: "11",
-        name: "Beverages",
-        slug: "beverages",
-        description: "Juices, soft drinks and beverages",
-        status: "active",
-        image: "https://images.immediate.co.uk/production/volatile/sites/30/2020/02/Glass-and-bottle-of-milk-fe0997a.jpg?quality=90&webp=true&resize=440,400",
-    },
-    {
-        id: "12",
-        name: "Cleaning",
-        slug: "cleaning",
-        description: "Detergent, floor cleaner and cleaning supplies",
-        status: "active",
-        image: "https://images.immediate.co.uk/production/volatile/sites/30/2020/02/Glass-and-bottle-of-milk-fe0997a.jpg?quality=90&webp=true&resize=440,400",
-    },
-    {
-        id: "13",
-        name: "Personal Care",
-        slug: "personal-care",
-        description: "Soap, shampoo and personal hygiene products",
-        status: "active",
-        image: "https://images.immediate.co.uk/production/volatile/sites/30/2020/02/Glass-and-bottle-of-milk-fe0997a.jpg?quality=90&webp=true&resize=440,400",
-    },
-    {
-        id: "14",
-        name: "Household",
-        slug: "household",
-        description: "Daily household essentials and supplies",
-        status: "active",
-        image: "https://images.immediate.co.uk/production/volatile/sites/30/2020/02/Glass-and-bottle-of-milk-fe0997a.jpg?quality=90&webp=true&resize=440,400",
-    },
-    {
-        id: "15",
-        name: "Bakery",
-        slug: "bakery",
-        description: "Bread, cakes and bakery items",
-        status: "active",
-        image: "https://images.immediate.co.uk/production/volatile/sites/30/2020/02/Glass-and-bottle-of-milk-fe0997a.jpg?quality=90&webp=true&resize=440,400",
-    },
-    {
-        id: "16",
-        name: "Frozen Food",
-        slug: "frozen-food",
-        icon: "🧊",
-        description: "Frozen vegetables, snacks and frozen items",
-        status: "active",
-        image: "https://images.immediate.co.uk/production/volatile/sites/30/2020/02/Glass-and-bottle-of-milk-fe0997a.jpg?quality=90&webp=true&resize=440,400",
-    },
-];
+// const categories = [
+//     {
+//         id: "1",
+//         name: "Dairy",
+//         slug: "dairy",
+//         description: "Milk, butter, cheese, curd and dairy products",
+//         status: "active",
+//         image: "https://images.immediate.co.uk/production/volatile/sites/30/2020/02/Glass-and-bottle-of-milk-fe0997a.jpg?quality=90&webp=true&resize=440,400",
+//     },
+//     {
+//         id: "2",
+//         name: "Grains",
+//         slug: "grains",
+//         description: "Rice, wheat, oats and grain products",
+//         status: "active",
+//         image: "https://images.immediate.co.uk/production/volatile/sites/30/2020/02/Glass-and-bottle-of-milk-fe0997a.jpg?quality=90&webp=true&resize=440,400",
+//     },
+//     {
+//         id: "3",
+//         name: "Pulses",
+//         slug: "pulses",
+//         description: "Dal, lentils and protein-rich pulses",
+//         status: "active",
+//         image: "https://images.immediate.co.uk/production/volatile/sites/30/2020/02/Glass-and-bottle-of-milk-fe0997a.jpg?quality=90&webp=true&resize=440,400",
+//     },
+//     {
+//         id: "4",
+//         name: "Oil",
+//         slug: "oil",
+//         description: "Cooking oil, olive oil and edible oils",
+//         status: "active",
+//         image: "https://images.immediate.co.uk/production/volatile/sites/30/2020/02/Glass-and-bottle-of-milk-fe0997a.jpg?quality=90&webp=true&resize=440,400",
+//     },
+//     {
+//         id: "5",
+//         name: "Spices",
+//         slug: "spices",
+//         description: "Masala, spices and seasoning products",
+//         status: "active",
+//         image: "https://images.immediate.co.uk/production/volatile/sites/30/2020/02/Glass-and-bottle-of-milk-fe0997a.jpg?quality=90&webp=true&resize=440,400",
+//     },
+//     {
+//         id: "6",
+//         name: "Vegetables",
+//         slug: "vegetables",
+//         description: "Fresh vegetables and greens",
+//         status: "active",
+//         image: "https://images.immediate.co.uk/production/volatile/sites/30/2020/02/Glass-and-bottle-of-milk-fe0997a.jpg?quality=90&webp=true&resize=440,400",
+//     },
+//     {
+//         id: "7",
+//         name: "Fruits",
+//         slug: "fruits",
+//         description: "Fresh fruits and seasonal fruits",
+//         status: "active",
+//         image: "https://images.immediate.co.uk/production/volatile/sites/30/2020/02/Glass-and-bottle-of-milk-fe0997a.jpg?quality=90&webp=true&resize=440,400",
+//     },
+//     {
+//         id: "8",
+//         name: "Meat",
+//         slug: "meat",
+//         description: "Chicken, mutton and fresh meat",
+//         status: "active",
+//         image: "https://images.immediate.co.uk/production/volatile/sites/30/2020/02/Glass-and-bottle-of-milk-fe0997a.jpg?quality=90&webp=true&resize=440,400",
+//     },
+//     {
+//         id: "9",
+//         name: "Eggs",
+//         slug: "eggs",
+//         description: "Farm fresh eggs and egg products",
+//         status: "active",
+//         image: "https://images.immediate.co.uk/production/volatile/sites/30/2020/02/Glass-and-bottle-of-milk-fe0997a.jpg?quality=90&webp=true&resize=440,400",
+//     },
+//     {
+//         id: "10",
+//         name: "Snacks",
+//         slug: "snacks",
+//         description: "Biscuits, chips and snack items",
+//         status: "active",
+//         image: "https://images.immediate.co.uk/production/volatile/sites/30/2020/02/Glass-and-bottle-of-milk-fe0997a.jpg?quality=90&webp=true&resize=440,400",
+//     },
+//     {
+//         id: "11",
+//         name: "Beverages",
+//         slug: "beverages",
+//         description: "Juices, soft drinks and beverages",
+//         status: "active",
+//         image: "https://images.immediate.co.uk/production/volatile/sites/30/2020/02/Glass-and-bottle-of-milk-fe0997a.jpg?quality=90&webp=true&resize=440,400",
+//     },
+//     {
+//         id: "12",
+//         name: "Cleaning",
+//         slug: "cleaning",
+//         description: "Detergent, floor cleaner and cleaning supplies",
+//         status: "active",
+//         image: "https://images.immediate.co.uk/production/volatile/sites/30/2020/02/Glass-and-bottle-of-milk-fe0997a.jpg?quality=90&webp=true&resize=440,400",
+//     },
+//     {
+//         id: "13",
+//         name: "Personal Care",
+//         slug: "personal-care",
+//         description: "Soap, shampoo and personal hygiene products",
+//         status: "active",
+//         image: "https://images.immediate.co.uk/production/volatile/sites/30/2020/02/Glass-and-bottle-of-milk-fe0997a.jpg?quality=90&webp=true&resize=440,400",
+//     },
+//     {
+//         id: "14",
+//         name: "Household",
+//         slug: "household",
+//         description: "Daily household essentials and supplies",
+//         status: "active",
+//         image: "https://images.immediate.co.uk/production/volatile/sites/30/2020/02/Glass-and-bottle-of-milk-fe0997a.jpg?quality=90&webp=true&resize=440,400",
+//     },
+//     {
+//         id: "15",
+//         name: "Bakery",
+//         slug: "bakery",
+//         description: "Bread, cakes and bakery items",
+//         status: "active",
+//         image: "https://images.immediate.co.uk/production/volatile/sites/30/2020/02/Glass-and-bottle-of-milk-fe0997a.jpg?quality=90&webp=true&resize=440,400",
+//     },
+//     {
+//         id: "16",
+//         name: "Frozen Food",
+//         slug: "frozen-food",
+//         icon: "🧊",
+//         description: "Frozen vegetables, snacks and frozen items",
+//         status: "active",
+//         image: "https://images.immediate.co.uk/production/volatile/sites/30/2020/02/Glass-and-bottle-of-milk-fe0997a.jpg?quality=90&webp=true&resize=440,400",
+//     },
+// ];
 
 const statusStyles: Record<string, string> = {
     active: "bg-success/10 text-success border-success/20",
@@ -188,15 +190,33 @@ const statusLabels: Record<string, string> = {
 };
 
 export default function Category() {
+    const [categoryData, setCategoryData] = useState([])
     const [selectedCategory, setSelectedCategory] = useState<string[]>([]);
     const [isFormOpen, setIsFormOpen] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
+
+    const FetchProductCategory = useCallback(async () => {
+        try {
+            const response = await getProductCategory();
+            setCategoryData(response?.data?.data)
+            console.log("response", response);
+        } catch (error) {
+            console.error("get product category error:", error)
+        } finally {
+            setIsLoading(false);
+        }
+    }, [])
+
+    useEffect(() => {
+        FetchProductCategory()
+    }, [FetchProductCategory]);
 
     const toggleSelectAll = () => {
-        if (selectedCategory.length === categories.length) {
-            setSelectedCategory([]);
-        } else {
-            setSelectedCategory(categories.map((c) => c.id));
-        }
+        // if (selectedCategory.length === categories.length) {
+        //     setSelectedCategory([]);
+        // } else {
+        //     setSelectedCategory(categories.map((c) => c.id));
+        // }
     };
 
     const toggleSelect = (id: string) => {
@@ -204,6 +224,24 @@ export default function Category() {
             prev.includes(id) ? prev.filter((c) => c !== id) : [...prev, id]
         );
     };
+
+    const deleteProductCategoryApi = async (id: string) => {
+        try {
+            console.log("id", id);
+            const response = await deleteProductCategory(id);
+            if (response) {
+                FetchProductCategory();
+            }
+        } catch (error) {
+            console.error("get product category error:", error)
+        } finally {
+            setIsLoading(false);
+        }
+    }
+
+    if (isLoading) {
+        return <div className="w-full flex justify-center items-center h-[100vh]"><p>Loading...</p></div>
+    }
 
     return (
         <AdminLayout
@@ -271,7 +309,7 @@ export default function Category() {
                         <TableRow className="bg-muted/50">
                             <TableHead className="w-12">
                                 <Checkbox
-                                    checked={selectedCategory.length === categories.length}
+                                    // checked={selectedCategory.length === categories.length}
                                     onCheckedChange={toggleSelectAll}
                                 />
                             </TableHead>
@@ -283,23 +321,23 @@ export default function Category() {
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {categories.map((category) => (
+                        {categoryData?.map((category) => (
                             <TableRow
                                 key={category.id}
                                 className={cn(
                                     "group transition-colors",
-                                    selectedCategory.includes(category.id) && "bg-primary/5"
+                                    selectedCategory.includes(category?.id) && "bg-primary/5"
                                 )}
                             >
                                 <TableCell>
                                     <Checkbox
-                                        checked={selectedCategory.includes(category.id)}
-                                        onCheckedChange={() => toggleSelect(category.id)}
+                                        checked={selectedCategory.includes(category?.id)}
+                                        onCheckedChange={() => toggleSelect(category?.id)}
                                     />
                                 </TableCell>
                                 <TableCell>
                                     <img
-                                        src={category?.image}
+                                        src={mediaUrl(category?.image)}
                                         alt="category-image"
                                         className="h-10 w-10 rounded-lg object-cover"
                                     />
@@ -342,12 +380,15 @@ export default function Category() {
                                                 <Edit className="h-4 w-4" />
                                                 Edit Product
                                             </DropdownMenuItem>
-                                            <DropdownMenuItem className="gap-2">
+                                            {/* <DropdownMenuItem className="gap-2">
                                                 <Copy className="h-4 w-4" />
                                                 Duplicate
-                                            </DropdownMenuItem>
+                                            </DropdownMenuItem> */}
                                             <DropdownMenuSeparator />
-                                            <DropdownMenuItem className="gap-2 text-destructive">
+                                            <DropdownMenuItem
+                                                className="gap-2 text-destructive"
+                                                onClick={() => deleteProductCategoryApi(category?._id)}
+                                            >
                                                 <Trash2 className="h-4 w-4" />
                                                 Delete
                                             </DropdownMenuItem>

@@ -13,14 +13,23 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Trash2, Upload } from "lucide-react";
 import { UploadSingleFile } from "@/services/uploadFile";
+import { addProductCategory } from "@/services/productService";
+import { toast } from "sonner";
 
 interface ProductFormProps {
     open: boolean;
     onOpenChange: (open: boolean) => void;
 }
 
+interface IFormData {
+    name: string,
+    image: string,
+    description: string,
+    isActive: boolean,
+}
+
 export function CategoryForm({ open, onOpenChange }: ProductFormProps) {
-    const [formData, setFormData] = useState({
+    const [formData, setFormData] = useState<IFormData>({
         name: "",
         image: "",
         description: "",
@@ -35,21 +44,45 @@ export function CategoryForm({ open, onOpenChange }: ProductFormProps) {
             setImageFile(file);
             const previewUrl = URL.createObjectURL(file);
             setImagePreview(previewUrl);
-            console.log("previewUrl", previewUrl);
         }
+    }
+
+    const removeImageHandler = (e) => {
+        e.preventDefault();
+        setImagePreview(null);
+        setImageFile(null);
+        setFormData((prev) => ({
+            ...prev,
+            image: ""
+        }))
     }
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
         try {
-            const mediaResponse = await UploadSingleFile({ file: imageFile });
-            console.log("mediaResponse", mediaResponse);
-            onOpenChange(false);
+            const payLoad = { ...formData };
+
+            if (imageFile) {
+                const mediaResponse = await UploadSingleFile({ file: imageFile });
+
+                if (mediaResponse?.data?.data?.key) {
+                    payLoad.image = mediaResponse.data.data.key;
+                }
+            }
+
+            const response = await addProductCategory(payLoad);
+
+            if (response) {
+                console.log("response", response);
+                toast.success("Product category added successfully");
+                onOpenChange(false);
+            }
+
         } catch (error) {
             console.log("Category post error", error);
+            toast.error("Something went wrong");
         }
-
     };
 
     return (
@@ -81,10 +114,10 @@ export function CategoryForm({ open, onOpenChange }: ProductFormProps) {
                         >
 
                             {/* Preview */}
-                            {imagePreview ? (
+                            {(imagePreview || formData?.image) ? (
                                 <>
                                     <img
-                                        src={imagePreview}
+                                        src={imagePreview || formData?.image}
                                         alt="category-image"
                                         className="w-full h-full object-cover"
                                     />
@@ -97,11 +130,7 @@ export function CategoryForm({ open, onOpenChange }: ProductFormProps) {
                                     {/* Remove Button */}
                                     <button
                                         type="button"
-                                        onClick={(e) => {
-                                            e.preventDefault();
-                                            setImagePreview(null);
-                                            setImageFile(null);
-                                        }}
+                                        onClick={removeImageHandler}
                                         className="absolute top-2 right-2 bg-white rounded-full p-1 shadow hover:bg-red-500 hover:text-white transition"
                                     >
                                         <Trash2 size={16} />
