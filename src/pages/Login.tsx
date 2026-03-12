@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
 import { LoginUser } from "@/services/authService";
 import { toast } from "sonner";
@@ -10,6 +10,7 @@ const Login = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
+    const isAuthenticated = localStorage.getItem("adminToken");
 
     const LoginHandler = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -31,6 +32,11 @@ const Login = () => {
             setLoading(false);
         }
     }
+
+    if (isAuthenticated) {
+        return <Navigate to="/dashboard" replace />;
+    }
+
 
     return (
         <div className="min-h-screen flex">

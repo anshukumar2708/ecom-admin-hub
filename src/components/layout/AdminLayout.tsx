@@ -1,6 +1,7 @@
 import { ReactNode } from "react";
 import { AdminSidebar } from "./AdminSidebar";
 import { AdminHeader } from "./AdminHeader";
+import { Navigate } from "react-router-dom";
 
 interface AdminLayoutProps {
   children: ReactNode;
@@ -9,6 +10,12 @@ interface AdminLayoutProps {
 }
 
 export function AdminLayout({ children, title, subtitle }: AdminLayoutProps) {
+  const isAuthenticated = localStorage.getItem("adminToken");
+
+  if (!isAuthenticated) {
+    return <Navigate to="/" replace />;
+  }
+
   return (
     <div className="min-h-screen bg-background">
       <AdminSidebar />

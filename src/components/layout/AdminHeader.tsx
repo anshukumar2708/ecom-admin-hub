@@ -1,6 +1,7 @@
 import { Bell, Search, Menu } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { LogOut } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -9,6 +10,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useNavigate } from "react-router-dom";
 
 interface AdminHeaderProps {
   title: string;
@@ -16,6 +18,13 @@ interface AdminHeaderProps {
 }
 
 export function AdminHeader({ title, subtitle }: AdminHeaderProps) {
+  const navigate = useNavigate();
+
+  const LogoutHandler = () => {
+    localStorage.removeItem("adminToken");
+    navigate("/", { replace: true });
+  };
+
   return (
     <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-6">
       <div className="flex items-center gap-4">
@@ -81,7 +90,15 @@ export function AdminHeader({ title, subtitle }: AdminHeaderProps) {
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
+
+        <div
+          onClick={LogoutHandler}
+          className="flex items-center gap-2 cursor-pointer text-red-500 hover:text-red-600"
+        >
+          <LogOut size={22} />
+        </div>
       </div>
+
     </header>
   );
 }

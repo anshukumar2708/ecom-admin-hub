@@ -19,6 +19,8 @@ import Login from "./pages/Login";
 
 const queryClient = new QueryClient();
 
+const isAuthenticated = localStorage.getItem("adminToken");
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
@@ -49,6 +51,7 @@ const App = () => (
           <Route path="/reports" element={<Reports />} />
           <Route path="/notifications" element={<Settings />} />
           <Route path="/settings" element={<Settings />} />
+
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
