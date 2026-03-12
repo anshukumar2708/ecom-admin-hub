@@ -34,7 +34,6 @@ import {
     Edit,
     Trash2,
     Eye,
-    Copy,
     Download,
     Upload,
 } from "lucide-react";
@@ -42,164 +41,20 @@ import { cn } from "@/lib/utils";
 import { CategoryForm } from "@/components/forms/CategoryForm";
 import { deleteProductCategory, getProductCategory } from "@/services/productService";
 import { mediaUrl } from "@/utils/helper";
-
-// const categories = [
-//     {
-//         id: "1",
-//         name: "Dairy",
-//         slug: "dairy",
-//         description: "Milk, butter, cheese, curd and dairy products",
-//         status: "active",
-//         image: "https://images.immediate.co.uk/production/volatile/sites/30/2020/02/Glass-and-bottle-of-milk-fe0997a.jpg?quality=90&webp=true&resize=440,400",
-//     },
-//     {
-//         id: "2",
-//         name: "Grains",
-//         slug: "grains",
-//         description: "Rice, wheat, oats and grain products",
-//         status: "active",
-//         image: "https://images.immediate.co.uk/production/volatile/sites/30/2020/02/Glass-and-bottle-of-milk-fe0997a.jpg?quality=90&webp=true&resize=440,400",
-//     },
-//     {
-//         id: "3",
-//         name: "Pulses",
-//         slug: "pulses",
-//         description: "Dal, lentils and protein-rich pulses",
-//         status: "active",
-//         image: "https://images.immediate.co.uk/production/volatile/sites/30/2020/02/Glass-and-bottle-of-milk-fe0997a.jpg?quality=90&webp=true&resize=440,400",
-//     },
-//     {
-//         id: "4",
-//         name: "Oil",
-//         slug: "oil",
-//         description: "Cooking oil, olive oil and edible oils",
-//         status: "active",
-//         image: "https://images.immediate.co.uk/production/volatile/sites/30/2020/02/Glass-and-bottle-of-milk-fe0997a.jpg?quality=90&webp=true&resize=440,400",
-//     },
-//     {
-//         id: "5",
-//         name: "Spices",
-//         slug: "spices",
-//         description: "Masala, spices and seasoning products",
-//         status: "active",
-//         image: "https://images.immediate.co.uk/production/volatile/sites/30/2020/02/Glass-and-bottle-of-milk-fe0997a.jpg?quality=90&webp=true&resize=440,400",
-//     },
-//     {
-//         id: "6",
-//         name: "Vegetables",
-//         slug: "vegetables",
-//         description: "Fresh vegetables and greens",
-//         status: "active",
-//         image: "https://images.immediate.co.uk/production/volatile/sites/30/2020/02/Glass-and-bottle-of-milk-fe0997a.jpg?quality=90&webp=true&resize=440,400",
-//     },
-//     {
-//         id: "7",
-//         name: "Fruits",
-//         slug: "fruits",
-//         description: "Fresh fruits and seasonal fruits",
-//         status: "active",
-//         image: "https://images.immediate.co.uk/production/volatile/sites/30/2020/02/Glass-and-bottle-of-milk-fe0997a.jpg?quality=90&webp=true&resize=440,400",
-//     },
-//     {
-//         id: "8",
-//         name: "Meat",
-//         slug: "meat",
-//         description: "Chicken, mutton and fresh meat",
-//         status: "active",
-//         image: "https://images.immediate.co.uk/production/volatile/sites/30/2020/02/Glass-and-bottle-of-milk-fe0997a.jpg?quality=90&webp=true&resize=440,400",
-//     },
-//     {
-//         id: "9",
-//         name: "Eggs",
-//         slug: "eggs",
-//         description: "Farm fresh eggs and egg products",
-//         status: "active",
-//         image: "https://images.immediate.co.uk/production/volatile/sites/30/2020/02/Glass-and-bottle-of-milk-fe0997a.jpg?quality=90&webp=true&resize=440,400",
-//     },
-//     {
-//         id: "10",
-//         name: "Snacks",
-//         slug: "snacks",
-//         description: "Biscuits, chips and snack items",
-//         status: "active",
-//         image: "https://images.immediate.co.uk/production/volatile/sites/30/2020/02/Glass-and-bottle-of-milk-fe0997a.jpg?quality=90&webp=true&resize=440,400",
-//     },
-//     {
-//         id: "11",
-//         name: "Beverages",
-//         slug: "beverages",
-//         description: "Juices, soft drinks and beverages",
-//         status: "active",
-//         image: "https://images.immediate.co.uk/production/volatile/sites/30/2020/02/Glass-and-bottle-of-milk-fe0997a.jpg?quality=90&webp=true&resize=440,400",
-//     },
-//     {
-//         id: "12",
-//         name: "Cleaning",
-//         slug: "cleaning",
-//         description: "Detergent, floor cleaner and cleaning supplies",
-//         status: "active",
-//         image: "https://images.immediate.co.uk/production/volatile/sites/30/2020/02/Glass-and-bottle-of-milk-fe0997a.jpg?quality=90&webp=true&resize=440,400",
-//     },
-//     {
-//         id: "13",
-//         name: "Personal Care",
-//         slug: "personal-care",
-//         description: "Soap, shampoo and personal hygiene products",
-//         status: "active",
-//         image: "https://images.immediate.co.uk/production/volatile/sites/30/2020/02/Glass-and-bottle-of-milk-fe0997a.jpg?quality=90&webp=true&resize=440,400",
-//     },
-//     {
-//         id: "14",
-//         name: "Household",
-//         slug: "household",
-//         description: "Daily household essentials and supplies",
-//         status: "active",
-//         image: "https://images.immediate.co.uk/production/volatile/sites/30/2020/02/Glass-and-bottle-of-milk-fe0997a.jpg?quality=90&webp=true&resize=440,400",
-//     },
-//     {
-//         id: "15",
-//         name: "Bakery",
-//         slug: "bakery",
-//         description: "Bread, cakes and bakery items",
-//         status: "active",
-//         image: "https://images.immediate.co.uk/production/volatile/sites/30/2020/02/Glass-and-bottle-of-milk-fe0997a.jpg?quality=90&webp=true&resize=440,400",
-//     },
-//     {
-//         id: "16",
-//         name: "Frozen Food",
-//         slug: "frozen-food",
-//         icon: "🧊",
-//         description: "Frozen vegetables, snacks and frozen items",
-//         status: "active",
-//         image: "https://images.immediate.co.uk/production/volatile/sites/30/2020/02/Glass-and-bottle-of-milk-fe0997a.jpg?quality=90&webp=true&resize=440,400",
-//     },
-// ];
-
-const statusStyles: Record<string, string> = {
-    active: "bg-success/10 text-success border-success/20",
-    inactive: "bg-muted text-muted-foreground border-muted",
-    low_stock: "bg-warning/10 text-warning border-warning/20",
-    out_of_stock: "bg-destructive/10 text-destructive border-destructive/20",
-};
-
-const statusLabels: Record<string, string> = {
-    active: "Active",
-    inactive: "Inactive",
-    low_stock: "Low Stock",
-    out_of_stock: "Out of Stock",
-};
+import { IProductCategory } from "@/types/product.category.type";
+import { toast } from "sonner";
 
 export default function Category() {
-    const [categoryData, setCategoryData] = useState([])
+    const [categoryData, setCategoryData] = useState<IProductCategory[] | []>([])
     const [selectedCategory, setSelectedCategory] = useState<string[]>([]);
     const [isFormOpen, setIsFormOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
+    const [activeCategory, setActiveCategory] = useState(null);
 
     const FetchProductCategory = useCallback(async () => {
         try {
             const response = await getProductCategory();
             setCategoryData(response?.data?.data)
-            console.log("response", response);
         } catch (error) {
             console.error("get product category error:", error)
         } finally {
@@ -225,10 +80,11 @@ export default function Category() {
         );
     };
 
-    const deleteProductCategoryApi = async (id: string) => {
+    const DeleteProductCategoryApi = async (id: string) => {
         try {
             const response = await deleteProductCategory(id);
             if (response) {
+                toast.success("Product category deleted successfully");
                 FetchProductCategory();
             }
         } catch (error) {
@@ -236,6 +92,11 @@ export default function Category() {
         } finally {
             setIsLoading(false);
         }
+    }
+
+    const UpdateFormOpenHandler = (data: IProductCategory) => {
+        setActiveCategory(data);
+        setIsFormOpen(true);
     }
 
     if (isLoading) {
@@ -352,13 +213,9 @@ export default function Category() {
                                 </TableCell>
 
                                 <TableCell>
-                                    <Badge
-                                        variant="outline"
-                                        className={cn(statusStyles[category?.status])}
-                                    >
-                                        {statusLabels[category?.status]}
-                                    </Badge>
+                                    {category?.isActive ? "Active" : "inActive"}
                                 </TableCell>
+
                                 <TableCell>
                                     <DropdownMenu>
                                         <DropdownMenuTrigger asChild>
@@ -373,11 +230,14 @@ export default function Category() {
                                         <DropdownMenuContent align="end">
                                             <DropdownMenuItem className="gap-2">
                                                 <Eye className="h-4 w-4" />
-                                                View Details
+                                                View
                                             </DropdownMenuItem>
-                                            <DropdownMenuItem className="gap-2">
+                                            <DropdownMenuItem
+                                                onClick={() => UpdateFormOpenHandler(category)}
+                                                className="gap-2"
+                                            >
                                                 <Edit className="h-4 w-4" />
-                                                Edit Product
+                                                Edit
                                             </DropdownMenuItem>
                                             {/* <DropdownMenuItem className="gap-2">
                                                 <Copy className="h-4 w-4" />
@@ -386,7 +246,7 @@ export default function Category() {
                                             <DropdownMenuSeparator />
                                             <DropdownMenuItem
                                                 className="gap-2 text-destructive"
-                                                onClick={() => deleteProductCategoryApi(category?._id)}
+                                                onClick={() => DeleteProductCategoryApi(category?._id)}
                                             >
                                                 <Trash2 className="h-4 w-4" />
                                                 Delete
@@ -415,7 +275,15 @@ export default function Category() {
                 </div>
             </div>
 
-            <CategoryForm open={isFormOpen} onOpenChange={setIsFormOpen} FetchProductCategory={FetchProductCategory} />
+            {isFormOpen &&
+                < CategoryForm
+                    open={isFormOpen}
+                    closeForm={() => setIsFormOpen(false)}
+                    FetchProductCategory={FetchProductCategory}
+                    updateData={activeCategory}
+                />
+            }
+
         </AdminLayout>
     );
 }

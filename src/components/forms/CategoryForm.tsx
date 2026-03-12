@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
     Dialog,
     DialogContent,
@@ -13,15 +13,17 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Trash2, Upload } from "lucide-react";
 import { UploadSingleFile } from "@/services/uploadFile";
-import { addProductCategory } from "@/services/productService";
+import { addProductCategory, updateProductCategory } from "@/services/productService";
 import { toast } from "sonner";
+import { IProductCategory } from "@/types/product.category.type";
+import { mediaUrl } from "@/utils/helper";
 
 interface ProductFormProps {
     open: boolean;
-    onOpenChange: (open: boolean) => void;
+    closeForm: () => void;
     FetchProductCategory: () => void;
+    updateData: IProductCategory
 }
-
 interface IFormData {
     name: string,
     image: string,
@@ -29,7 +31,7 @@ interface IFormData {
     isActive: boolean,
 }
 
-export function CategoryForm({ open, onOpenChange, FetchProductCategory }: ProductFormProps) {
+export function CategoryForm({ open, closeForm, FetchProductCategory, updateData }: ProductFormProps) {
     const [formData, setFormData] = useState<IFormData>({
         name: "",
         image: "",
@@ -38,6 +40,17 @@ export function CategoryForm({ open, onOpenChange, FetchProductCategory }: Produ
     });
     const [imageFile, setImageFile] = useState(null);
     const [imagePreview, setImagePreview] = useState("");
+
+    useEffect(() => {
+        if (updateData?._id) {
+            setFormData(() => ({
+                name: updateData?.name,
+                image: updateData?.image,
+                description: updateData?.description,
+                isActive: updateData?.isActive,
+            }))
+        }
+    }, [updateData]);
 
     const handleFileChange = (event) => {
         const file = event.target.files?.[0];
@@ -58,7 +71,7 @@ export function CategoryForm({ open, onOpenChange, FetchProductCategory }: Produ
         }))
     }
 
-    const clearForm = () => {
+    const clearFormHandler = () => {
         setFormData(() => ({
             name: "",
             image: "",
@@ -81,13 +94,15 @@ export function CategoryForm({ open, onOpenChange, FetchProductCategory }: Produ
                 }
             }
 
-            const response = await addProductCategory(payLoad);
+            const response = updateData?._id
+                ? await updateProductCategory(updateData._id, payLoad)
+                : await addProductCategory(payLoad);
 
             if (response) {
                 FetchProductCategory();
-                clearForm();
+                clearFormHandler();
                 toast.success("Product category added successfully");
-                onOpenChange(false);
+                closeForm();
             }
 
         } catch (error) {
@@ -96,8 +111,9 @@ export function CategoryForm({ open, onOpenChange, FetchProductCategory }: Produ
         }
     };
 
+
     return (
-        <Dialog open={open} onOpenChange={onOpenChange}>
+        <Dialog open={open} onOpenChange={() => closeForm()}>
             <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
                     <DialogTitle>Add New Category</DialogTitle>
@@ -128,7 +144,7 @@ export function CategoryForm({ open, onOpenChange, FetchProductCategory }: Produ
                             {(imagePreview || formData?.image) ? (
                                 <>
                                     <img
-                                        src={imagePreview || formData?.image}
+                                        src={imagePreview || mediaUrl(formData?.image)}
                                         alt="category-image"
                                         className="w-full h-full object-cover"
                                     />
@@ -188,7 +204,7 @@ export function CategoryForm({ open, onOpenChange, FetchProductCategory }: Produ
                     </div>
 
                     <DialogFooter>
-                        <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+                        <Button type="button" variant="outline" onClick={closeForm}>
                             Cancel
                         </Button>
                         <Button type="submit">Add Category</Button>
