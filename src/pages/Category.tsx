@@ -227,7 +227,6 @@ export default function Category() {
 
     const deleteProductCategoryApi = async (id: string) => {
         try {
-            console.log("id", id);
             const response = await deleteProductCategory(id);
             if (response) {
                 FetchProductCategory();
@@ -416,7 +415,7 @@ export default function Category() {
                 </div>
             </div>
 
-            <CategoryForm open={isFormOpen} onOpenChange={setIsFormOpen} />
+            <CategoryForm open={isFormOpen} onOpenChange={setIsFormOpen} FetchProductCategory={FetchProductCategory} />
         </AdminLayout>
     );
 }

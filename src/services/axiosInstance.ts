@@ -1,4 +1,5 @@
 import axios from "axios";
+import { toast } from "sonner";
 
 const axiosInstance = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,
@@ -32,10 +33,22 @@ axiosInstance.interceptors.response.use(
   (response) => response,
   (error) => {
 
-    if (error.response?.status === 401) {
-      localStorage.removeItem("adminToken");
-      window.location.href = "/login";
+    let message = "Something went wrong";
+
+    if (error.response) {
+      // API responded with error
+      message = error.response.data?.message || error.response.data?.error;
+    } 
+    else if (error.request) {
+      // Request sent but no response
+      message = "No response from server";
+    } 
+    else {
+      // Other error
+      message = error.message;
     }
+    
+    toast.error(message);
 
     return Promise.reject(error);
   }

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
 import { LoginUser } from "@/services/authService";
+import { toast } from "sonner";
 
 const Login = () => {
     const [email, setEmail] = useState("");
@@ -20,6 +21,7 @@ const Login = () => {
             setLoading(true);
             const response = await LoginUser(payload);
             if (response) {
+                toast.success("Login successful");
                 localStorage.setItem("adminToken", response?.data?.token);
                 navigate("/dashboard");
             }
@@ -76,6 +78,7 @@ const Login = () => {
 
                             <input
                                 type="email"
+                                required
                                 value={email}
                                 onChange={(event) => setEmail(event.target.value)}
                                 placeholder="admin@email.com"
@@ -93,6 +96,7 @@ const Login = () => {
 
                                 <input
                                     type={showPassword ? "text" : "password"}
+                                    required
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
                                     placeholder="Enter password"

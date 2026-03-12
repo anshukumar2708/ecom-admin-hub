@@ -19,6 +19,7 @@ import { toast } from "sonner";
 interface ProductFormProps {
     open: boolean;
     onOpenChange: (open: boolean) => void;
+    FetchProductCategory: () => void;
 }
 
 interface IFormData {
@@ -28,7 +29,7 @@ interface IFormData {
     isActive: boolean,
 }
 
-export function CategoryForm({ open, onOpenChange }: ProductFormProps) {
+export function CategoryForm({ open, onOpenChange, FetchProductCategory }: ProductFormProps) {
     const [formData, setFormData] = useState<IFormData>({
         name: "",
         image: "",
@@ -57,6 +58,15 @@ export function CategoryForm({ open, onOpenChange }: ProductFormProps) {
         }))
     }
 
+    const clearForm = () => {
+        setFormData(() => ({
+            name: "",
+            image: "",
+            description: "",
+            isActive: true,
+        }));
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
@@ -74,7 +84,8 @@ export function CategoryForm({ open, onOpenChange }: ProductFormProps) {
             const response = await addProductCategory(payLoad);
 
             if (response) {
-                console.log("response", response);
+                FetchProductCategory();
+                clearForm();
                 toast.success("Product category added successfully");
                 onOpenChange(false);
             }
