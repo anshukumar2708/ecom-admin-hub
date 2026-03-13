@@ -44,6 +44,7 @@ import { mediaUrl } from "@/utils/helper";
 import { IProductCategory } from "@/types/product.category.type";
 import { toast } from "sonner";
 import { DeleteSingleFile } from "@/services/uploadFile";
+import ActionBar from "@/components/admin/ActionBar";
 
 export default function Category() {
     const [categoryData, setCategoryData] = useState<IProductCategory[] | []>([])
@@ -51,17 +52,29 @@ export default function Category() {
     const [isFormOpen, setIsFormOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
     const [activeCategory, setActiveCategory] = useState(null);
+    const [filter, setFilter] = useState({
+        search: "",
+        page: 1,
+        limit: 10
+    });
 
     const FetchProductCategory = useCallback(async () => {
         try {
-            const response = await getProductCategory();
+            const params = new URLSearchParams();
+
+            if (filter.search) params.append("search", filter.search);
+
+            const query = params.toString() ? `?${params.toString()}` : "";
+
+            const response = await getProductCategory(query);
+
             setCategoryData(response?.data?.data)
         } catch (error) {
             console.error("get product category error:", error)
         } finally {
             setIsLoading(false);
         }
-    }, [])
+    }, [filter.search])
 
     useEffect(() => {
         FetchProductCategory()
@@ -111,44 +124,10 @@ export default function Category() {
             subtitle="Manage your Categories catalog and inventory"
         >
             {/* Actions Bar */}
-            <div className="flex flex-col sm:flex-row gap-4 mb-6">
-                <div className="flex-1 flex gap-3">
-                    <div className="relative flex-1 max-w-md">
-                        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                        <Input
-                            placeholder="Search categories..."
-                            className="pl-9"
-                        />
-                    </div>
-                    <Select defaultValue="all">
-                        <SelectTrigger className="w-36">
-                            <SelectValue placeholder="Status" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="all">All Status</SelectItem>
-                            <SelectItem value="active">Active</SelectItem>
-                            <SelectItem value="inactive">Inactive</SelectItem>
-                        </SelectContent>
-                    </Select>
-                    <Button variant="outline" size="icon">
-                        <Filter className="h-4 w-4" />
-                    </Button>
-                </div>
-                <div className="flex gap-2">
-                    <Button variant="outline" className="gap-2">
-                        <Upload className="h-4 w-4" />
-                        Import
-                    </Button>
-                    <Button variant="outline" className="gap-2">
-                        <Download className="h-4 w-4" />
-                        Export
-                    </Button>
-                    <Button className="gap-2" onClick={() => setIsFormOpen(true)}>
-                        <Plus className="h-4 w-4" />
-                        Add Product Category
-                    </Button>
-                </div>
-            </div>
+            <ActionBar
+                setFilter={setFilter}
+                openForm={() => setIsFormOpen(true)}
+            />
 
             {/* Bulk Actions */}
             {selectedCategory.length > 0 && (
