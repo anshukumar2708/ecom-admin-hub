@@ -39,6 +39,16 @@ axiosInstance.interceptors.response.use(
       // API responded with error
       message = error.response.data?.message || error.response.data?.error;
     } 
+          // Handle JWT expired or unauthorized
+      if (
+        message === "middleware error jwt expired"
+      ) {
+        // Remove token
+        localStorage.removeItem("adminToken");
+        // Redirect to home/login
+        window.location.href = "/";
+      }
+    
     else if (error.request) {
       // Request sent but no response
       message = "No response from server";

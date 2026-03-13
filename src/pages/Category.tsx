@@ -43,6 +43,7 @@ import { deleteProductCategory, getProductCategory } from "@/services/productSer
 import { mediaUrl } from "@/utils/helper";
 import { IProductCategory } from "@/types/product.category.type";
 import { toast } from "sonner";
+import { DeleteSingleFile } from "@/services/uploadFile";
 
 export default function Category() {
     const [categoryData, setCategoryData] = useState<IProductCategory[] | []>([])
@@ -80,11 +81,12 @@ export default function Category() {
         );
     };
 
-    const DeleteProductCategoryApi = async (id: string) => {
+    const DeleteProductCategoryApi = async (id: string, fileKey: string) => {
         try {
             const response = await deleteProductCategory(id);
             if (response) {
                 toast.success("Product category deleted successfully");
+                await DeleteSingleFile({ fileKey });
                 FetchProductCategory();
             }
         } catch (error) {
@@ -181,9 +183,9 @@ export default function Category() {
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {categoryData?.map((category) => (
+                        {categoryData?.map((category, index) => (
                             <TableRow
-                                key={category.id}
+                                key={index}
                                 className={cn(
                                     "group transition-colors",
                                     selectedCategory.includes(category?.id) && "bg-primary/5"
@@ -246,7 +248,7 @@ export default function Category() {
                                             <DropdownMenuSeparator />
                                             <DropdownMenuItem
                                                 className="gap-2 text-destructive"
-                                                onClick={() => DeleteProductCategoryApi(category?._id)}
+                                                onClick={() => DeleteProductCategoryApi(category?._id, category?.image)}
                                             >
                                                 <Trash2 className="h-4 w-4" />
                                                 Delete

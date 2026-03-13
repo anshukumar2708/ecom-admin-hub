@@ -12,7 +12,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Trash2, Upload } from "lucide-react";
-import { UploadSingleFile } from "@/services/uploadFile";
+import { DeleteSingleFile, UploadSingleFile } from "@/services/uploadFile";
 import { addProductCategory, updateProductCategory } from "@/services/productService";
 import { toast } from "sonner";
 import { IProductCategory } from "@/types/product.category.type";
@@ -88,8 +88,10 @@ export function CategoryForm({ open, closeForm, FetchProductCategory, updateData
 
             if (imageFile) {
                 const mediaResponse = await UploadSingleFile({ file: imageFile });
-
                 if (mediaResponse?.data?.data?.key) {
+                    if (updateData?._id && formData?.image) {
+                        await DeleteSingleFile({ fileKey: formData?.image });
+                    }
                     payLoad.image = mediaResponse.data.data.key;
                 }
             }
@@ -110,7 +112,6 @@ export function CategoryForm({ open, closeForm, FetchProductCategory, updateData
             toast.error("Something went wrong");
         }
     };
-
 
     return (
         <Dialog open={open} onOpenChange={() => closeForm()}>

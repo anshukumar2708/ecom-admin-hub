@@ -19,8 +19,6 @@ import Login from "./pages/Login";
 
 const queryClient = new QueryClient();
 
-const isAuthenticated = localStorage.getItem("adminToken");
-
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
