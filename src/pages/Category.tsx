@@ -46,16 +46,22 @@ import { toast } from "sonner";
 import { DeleteSingleFile } from "@/services/uploadFile";
 import ActionBar from "@/components/admin/ActionBar";
 
+export interface IFilter {
+    search: string,
+    page: string,
+    limit: string,
+}
+
 export default function Category() {
     const [categoryData, setCategoryData] = useState<IProductCategory[] | []>([])
     const [selectedCategory, setSelectedCategory] = useState<string[]>([]);
     const [isFormOpen, setIsFormOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
     const [activeCategory, setActiveCategory] = useState(null);
-    const [filter, setFilter] = useState({
+    const [filter, setFilter] = useState<IFilter>({
         search: "",
-        page: 1,
-        limit: 10
+        page: "1",
+        limit: ""
     });
 
     const FetchProductCategory = useCallback(async () => {
@@ -63,6 +69,8 @@ export default function Category() {
             const params = new URLSearchParams();
 
             if (filter.search) params.append("search", filter.search);
+            if (filter.page) params.append("page", filter.page);
+            if (filter.limit) params.append("limit", filter.limit);
 
             const query = params.toString() ? `?${params.toString()}` : "";
 
@@ -74,7 +82,7 @@ export default function Category() {
         } finally {
             setIsLoading(false);
         }
-    }, [filter.search])
+    }, [filter])
 
     useEffect(() => {
         FetchProductCategory()

@@ -3,13 +3,10 @@ import { Download, Filter, Plus, Search, Upload } from 'lucide-react'
 import { Input } from '../ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select'
 import { Button } from '../ui/button'
+import { IFilter } from '@/pages/Category';
 
 interface IProps {
-    setFilter: React.Dispatch<React.SetStateAction<{
-        search: string;
-        page: number;
-        limit: number;
-    }>>;
+    setFilter: React.Dispatch<React.SetStateAction<IFilter>>;
     openForm: () => void;
 }
 
@@ -21,7 +18,8 @@ const ActionBar = ({ setFilter, openForm }: IProps) => {
         const timer = setTimeout(() => {
             setFilter((prev) => ({
                 ...prev,
-                search: searchQuery
+                search: searchQuery,
+
             }))
         }, 300);
 
