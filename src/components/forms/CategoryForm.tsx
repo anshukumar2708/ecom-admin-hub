@@ -29,6 +29,7 @@ interface IFormData {
     image: string,
     description: string,
     isActive: boolean,
+    displayOrder: number | null
 }
 
 export function CategoryForm({ open, closeForm, FetchProductCategory, updateData }: ProductFormProps) {
@@ -37,6 +38,7 @@ export function CategoryForm({ open, closeForm, FetchProductCategory, updateData
         image: "",
         description: "",
         isActive: true,
+        displayOrder: null
     });
     const [imageFile, setImageFile] = useState(null);
     const [imagePreview, setImagePreview] = useState("");
@@ -48,6 +50,7 @@ export function CategoryForm({ open, closeForm, FetchProductCategory, updateData
                 image: updateData?.image,
                 description: updateData?.description,
                 isActive: updateData?.isActive,
+                displayOrder: updateData?.displayOrder
             }))
         }
     }, [updateData]);
@@ -77,6 +80,7 @@ export function CategoryForm({ open, closeForm, FetchProductCategory, updateData
             image: "",
             description: "",
             isActive: true,
+            displayOrder: null
         }));
     };
 
@@ -195,14 +199,39 @@ export function CategoryForm({ open, closeForm, FetchProductCategory, updateData
                         />
                     </div>
 
-                    <div className="flex items-center gap-3">
-                        <Switch
-                            id="isActive"
-                            checked={formData.isActive}
-                            onCheckedChange={(checked) => setFormData({ ...formData, isActive: checked })}
-                        />
-                        <Label htmlFor="isActive">Active Category</Label>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+                        <div className="space-y-2">
+                            <Label htmlFor="displayOrder">Display Order</Label>
+                            <Input
+                                id="displayOrder"
+                                placeholder="Enter display order..."
+                                value={formData.displayOrder}
+                                onChange={(e) =>
+                                    setFormData({
+                                        ...formData,
+                                        displayOrder: Number(e.target.value)
+                                    })
+                                }
+                            />
+                        </div>
+
+                        <div className="space-y-2">
+                            <div className="flex items-center gap-3">
+                                <Switch
+                                    id="isActive"
+                                    checked={formData.isActive}
+                                    onCheckedChange={(checked) =>
+                                        setFormData({ ...formData, isActive: checked })
+                                    }
+                                />
+                                <Label htmlFor="isActive">Active Category</Label>
+                            </div>
+                        </div>
+
                     </div>
+
 
                     <DialogFooter>
                         <Button type="button" variant="outline" onClick={closeForm}>
