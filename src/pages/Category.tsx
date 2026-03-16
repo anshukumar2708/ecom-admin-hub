@@ -21,6 +21,7 @@ export default function Category() {
     const [categoryData, setCategoryData] = useState<IProductCategory[] | []>([])
     const [selectedCategory, setSelectedCategory] = useState<string[]>([]);
     const [isFormOpen, setIsFormOpen] = useState(false);
+    const [pageLoading, setPageLoading] = useState(true);
     const [isLoading, setIsLoading] = useState(true);
     const [activeCategory, setActiveCategory] = useState(null);
     const [filter, setFilter] = useState<IFilter>({
@@ -45,7 +46,7 @@ export default function Category() {
         } catch (error) {
             console.error("get product category error:", error)
         } finally {
-            setIsLoading(false);
+            setPageLoading(false);
         }
     }, [filter])
 
@@ -128,7 +129,7 @@ export default function Category() {
         }
     ];
 
-    if (isLoading) {
+    if (pageLoading) {
         return <div className="w-full flex justify-center items-center h-[100vh]"><p>Loading...</p></div>
     }
 
@@ -160,11 +161,13 @@ export default function Category() {
                 toggleSelect={toggleSelect}
                 toggleSelectAll={toggleSelectAll}
 
-                onView={(row) => console.log(row)}
+                isLoading={isLoading}
 
-                onEdit={(row) => UpdateFormOpenHandler(row)}
+                onView={(row: IProductCategory) => console.log(row)}
 
-                onDelete={(row) =>
+                onEdit={(row: IProductCategory) => UpdateFormOpenHandler(row)}
+
+                onDelete={(row: IProductCategory) =>
                     DeleteProductCategoryApi(row._id, row.image)
                 }
             />

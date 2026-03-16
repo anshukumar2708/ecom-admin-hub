@@ -6,7 +6,7 @@ interface IDeleteModelProps {
     onClose: () => void;
     message: string;
     onSubmit: () => void;
-    loading?: boolean;
+    isLoading?: boolean;
     title: string;
 }
 
@@ -16,7 +16,7 @@ const DeleteModel = ({
     title,
     message,
     onSubmit,
-    loading = false,
+    isLoading = false,
 }: IDeleteModelProps) => {
 
     const handleSubmit = () => {
@@ -65,7 +65,7 @@ const DeleteModel = ({
                 <div className="grid grid-cols-2 gap-3 border-t pt-4">
                     <button
                         onClick={onClose}
-                        disabled={loading}
+                        disabled={isLoading}
                         className="w-full rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100"
                     >
                         Cancel
@@ -73,10 +73,10 @@ const DeleteModel = ({
 
                     <button
                         onClick={handleSubmit}
-                        disabled={loading}
+                        disabled={isLoading}
                         className="w-full rounded-md bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 disabled:opacity-50"
                     >
-                        {loading ? "Deleting..." : "Delete"}
+                        {isLoading ? "Deleting..." : "Delete"}
                     </button>
                 </div>
             </div>

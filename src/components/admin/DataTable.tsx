@@ -20,10 +20,13 @@ import {
 
 import { MoreHorizontal, Edit, Trash2, Eye } from "lucide-react";
 import { cn } from "@/lib/utils";
+import DeleteModel from "./DeleteModel";
+import { useState } from "react";
 
 export default function DataTable({
     columns,
     data,
+    isLoading,
     selectedRows = [],
     rowKey,
     toggleSelect,
@@ -32,6 +35,8 @@ export default function DataTable({
     onEdit,
     onDelete,
 }) {
+    const [activeData, setActiveData] = useState(null);
+
     return (
         <div className="rounded-xl border bg-card shadow-soft overflow-x-auto">
             <Table>
@@ -129,7 +134,9 @@ export default function DataTable({
                                                         <DropdownMenuSeparator />
                                                         <DropdownMenuItem
                                                             className="gap-2 text-destructive"
-                                                            onClick={() => onDelete(row)}
+                                                            onClick={() => {
+                                                                setActiveData(row)
+                                                            }}
                                                         >
                                                             <Trash2 className="h-4 w-4" />
                                                             Delete
@@ -147,6 +154,20 @@ export default function DataTable({
                     })}
                 </TableBody>
             </Table>
+
+            {activeData &&
+                <DeleteModel
+                    isOpen={activeData}
+                    onClose={() => {
+                        setActiveData(null);
+                    }}
+                    title="Do you want to delete this data.?"
+                    message=""
+                    isLoading={isLoading}
+                    onSubmit={() => onDelete(activeData)}
+                />
+            }
+
         </div>
     );
 }
