@@ -11,6 +11,9 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useNavigate } from "react-router-dom";
+import { AppDialog } from "../admin/AppDialog";
+import { useState } from "react";
+import { toast } from "sonner";
 
 interface AdminHeaderProps {
   title: string;
@@ -18,12 +21,19 @@ interface AdminHeaderProps {
 }
 
 export function AdminHeader({ title, subtitle }: AdminHeaderProps) {
+  const [isLogoutModelOpen, setIsLogoutModelOpen] = useState(false);
   const navigate = useNavigate();
 
   const LogoutHandler = () => {
+    toast.success("Logged out successfully");
     localStorage.removeItem("adminToken");
     navigate("/", { replace: true });
   };
+
+  const handleLogoutModelClose = () => {
+    setIsLogoutModelOpen(false);
+  };
+
 
   return (
     <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-6">
@@ -92,13 +102,71 @@ export function AdminHeader({ title, subtitle }: AdminHeaderProps) {
         </DropdownMenu>
 
         <div
-          onClick={LogoutHandler}
+          onClick={() => setIsLogoutModelOpen(true)}
           className="flex items-center gap-2 cursor-pointer text-red-500 hover:text-red-600"
         >
           <LogOut size={22} />
         </div>
+
+
+        {/* LogOut Model */}
+        <AppDialog
+          open={isLogoutModelOpen}
+          onClose={handleLogoutModelClose}
+          maxWidth="sm"
+          title=""
+        >
+          <div className="p-6 space-y-6">
+            {/* Header / Message */}
+            <div className="flex gap-4">
+              {/* Warning Icon */}
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-red-100 text-red-600">
+                <svg
+                  className="h-5 w-5"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M12 9v2m0 4h.01M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9-4.03-9-9-9z"
+                  />
+                </svg>
+              </div>
+
+              {/* Text Content */}
+              <div className="space-y-1">
+                <h2 className="text-lg font-semibold text-gray-900">
+                  Logout Confirmation
+                </h2>
+                <p className="text-sm text-gray-600">
+                  Are you sure you want to logout?
+                </p>
+              </div>
+            </div>
+
+            {/* Footer Actions */}
+            <div className="grid grid-cols-2 gap-3 border-t pt-4">
+              <button
+                onClick={handleLogoutModelClose}
+                className="w-full rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100"
+              >
+                Cancel
+              </button>
+
+              <button
+                onClick={LogoutHandler}
+                className="w-full rounded-md bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700 disabled:opacity-50"
+              >
+                Logout
+              </button>
+            </div>
+          </div>
+        </AppDialog>
       </div>
 
-    </header>
+    </header >
   );
 }
