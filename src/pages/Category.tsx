@@ -1,43 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
 import { AdminLayout } from "@/components/layout/AdminLayout";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
-import { Checkbox } from "@/components/ui/checkbox";
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select";
-import {
-    Plus,
-    Search,
-    Filter,
-    MoreHorizontal,
-    Edit,
-    Trash2,
-    Eye,
-    Download,
-    Upload,
-} from "lucide-react";
-import { cn } from "@/lib/utils";
 import { CategoryForm } from "@/components/forms/CategoryForm";
 import { deleteProductCategory, getProductCategory } from "@/services/productService";
 import { mediaUrl } from "@/utils/helper";
@@ -45,6 +7,9 @@ import { IProductCategory } from "@/types/product.category.type";
 import { toast } from "sonner";
 import { DeleteSingleFile } from "@/services/uploadFile";
 import ActionBar from "@/components/admin/ActionBar";
+import BulkActions from "@/components/admin/BulkActions";
+import TablePagination from "@/components/admin/TablePagination";
+import DataTable from "@/components/admin/DataTable";
 
 export interface IFilter {
     search: string,
@@ -122,6 +87,47 @@ export default function Category() {
         setIsFormOpen(true);
     }
 
+    const columns = [
+        {
+            title: "Image",
+            dataIndex: "image",
+            key: "image",
+            render: (value: string) => (
+                <img
+                    src={mediaUrl(value)}
+                    className="h-10 w-10 rounded-lg object-cover"
+                />
+            ),
+        },
+        {
+            title: "Name",
+            dataIndex: "name",
+            key: "name",
+        },
+        {
+            title: "Description",
+            dataIndex: "description",
+            key: "description",
+        },
+        {
+            title: "Status",
+            dataIndex: "isActive",
+            key: "isActive",
+            render: (value: boolean) =>
+                value ? "Active" : "Inactive",
+        },
+        {
+            title: "Display Order",
+            dataIndex: "displayOrder",
+            key: "displayOrder",
+            render: (value: number) => {
+                return (
+                    <p>{value ?? "N/A"}</p>
+                )
+            }
+        }
+    ];
+
     if (isLoading) {
         return <div className="w-full flex justify-center items-center h-[100vh]"><p>Loading...</p></div>
     }
@@ -139,130 +145,48 @@ export default function Category() {
 
             {/* Bulk Actions */}
             {selectedCategory.length > 0 && (
-                <div className="flex items-center gap-4 p-4 mb-4 rounded-lg bg-primary/5 border border-primary/20 animate-fade-in">
-                    <span className="text-sm font-medium">
-                        {selectedCategory.length} selected
-                    </span>
-                    <div className="flex gap-2">
-                        <Button variant="outline" size="sm" className="text-destructive">
-                            Delete Selected
-                        </Button>
-                    </div>
-                </div>
+                <BulkActions
+                    selectedCount={selectedCategory.length}
+                    onDelete={() => console.log("delete selected")}
+                />
             )}
 
             {/* Categories Table */}
-            <div className="rounded-xl border bg-card shadow-soft overflow-hidden">
-                <Table>
-                    <TableHeader>
-                        <TableRow className="bg-muted/50">
-                            <TableHead className="w-12">
-                                <Checkbox
-                                    // checked={selectedCategory.length === categories.length}
-                                    onCheckedChange={toggleSelectAll}
-                                />
-                            </TableHead>
-                            <TableHead>Image</TableHead>
-                            <TableHead>Name</TableHead>
-                            <TableHead>Description</TableHead>
-                            <TableHead>Status</TableHead>
-                            <TableHead className="w-12"></TableHead>
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                        {categoryData?.map((category, index) => (
-                            <TableRow
-                                key={index}
-                                className={cn(
-                                    "group transition-colors",
-                                    selectedCategory.includes(category?.id) && "bg-primary/5"
-                                )}
-                            >
-                                <TableCell>
-                                    <Checkbox
-                                        checked={selectedCategory.includes(category?.id)}
-                                        onCheckedChange={() => toggleSelect(category?.id)}
-                                    />
-                                </TableCell>
-                                <TableCell>
-                                    <img
-                                        src={mediaUrl(category?.image)}
-                                        alt="category-image"
-                                        className="h-10 w-10 rounded-lg object-cover"
-                                    />
-                                </TableCell>
+            <DataTable
+                columns={columns}
+                data={categoryData}
+                rowKey="_id"
+                selectedRows={selectedCategory}
+                toggleSelect={toggleSelect}
+                toggleSelectAll={toggleSelectAll}
 
-                                <TableCell>
-                                    {category?.name}
-                                </TableCell>
+                onView={(row) => console.log(row)}
 
+                onEdit={(row) => UpdateFormOpenHandler(row)}
 
-                                <TableCell>
-                                    {category?.description}
-                                </TableCell>
-
-                                <TableCell>
-                                    {category?.isActive ? "Active" : "inActive"}
-                                </TableCell>
-
-                                <TableCell>
-                                    <DropdownMenu>
-                                        <DropdownMenuTrigger asChild>
-                                            <Button
-                                                variant="ghost"
-                                                size="icon"
-                                                className="opacity-0 group-hover:opacity-100 transition-opacity"
-                                            >
-                                                <MoreHorizontal className="h-4 w-4" />
-                                            </Button>
-                                        </DropdownMenuTrigger>
-                                        <DropdownMenuContent align="end">
-                                            <DropdownMenuItem className="gap-2">
-                                                <Eye className="h-4 w-4" />
-                                                View
-                                            </DropdownMenuItem>
-                                            <DropdownMenuItem
-                                                onClick={() => UpdateFormOpenHandler(category)}
-                                                className="gap-2"
-                                            >
-                                                <Edit className="h-4 w-4" />
-                                                Edit
-                                            </DropdownMenuItem>
-                                            {/* <DropdownMenuItem className="gap-2">
-                                                <Copy className="h-4 w-4" />
-                                                Duplicate
-                                            </DropdownMenuItem> */}
-                                            <DropdownMenuSeparator />
-                                            <DropdownMenuItem
-                                                className="gap-2 text-destructive"
-                                                onClick={() => DeleteProductCategoryApi(category?._id, category?.image)}
-                                            >
-                                                <Trash2 className="h-4 w-4" />
-                                                Delete
-                                            </DropdownMenuItem>
-                                        </DropdownMenuContent>
-                                    </DropdownMenu>
-                                </TableCell>
-                            </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-            </div>
+                onDelete={(row) =>
+                    DeleteProductCategoryApi(row._id, row.image)
+                }
+            />
 
             {/* Pagination */}
-            <div className="flex items-center justify-between mt-4">
-                <p className="text-sm text-muted-foreground">
-                    Showing 1-8 of 1,234 categories
-                </p>
-                <div className="flex gap-2">
-                    <Button variant="outline" size="sm" disabled>
-                        Previous
-                    </Button>
-                    <Button variant="outline" size="sm">
-                        Next
-                    </Button>
-                </div>
-            </div>
+            <TablePagination
+                page={Number(filter.page)}
+                total={1234}
+                limit={8}
+                onPrev={() =>
+                    setFilter((prev) => ({
+                        ...prev,
+                        page: String(Number(prev.page) - 1),
+                    }))
+                }
+                onNext={() =>
+                    setFilter((prev) => ({
+                        ...prev,
+                        page: String(Number(prev.page) + 1),
+                    }))
+                }
+            />
 
             {isFormOpen &&
                 < CategoryForm
