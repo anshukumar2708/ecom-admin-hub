@@ -51,13 +51,13 @@ export function AdminHeader({ title, subtitle }: AdminHeaderProps) {
 
       <div className="flex items-center gap-3">
         {/* Search */}
-        <div className="relative hidden md:block">
+        {/* <div className="relative hidden md:block">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             placeholder="Search anything..."
             className="w-64 pl-9 bg-muted/50 border-0 focus-visible:bg-background focus-visible:ring-1"
           />
-        </div>
+        </div> */}
 
         {/* Notifications */}
         <DropdownMenu>

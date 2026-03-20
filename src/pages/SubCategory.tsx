@@ -151,27 +151,23 @@ export default function SubCategory() {
                 />
             )}
 
-            {isPageLoading && <div className="w-full flex justify-center items-center h-[100vh]">
-                <p>Loading...</p>
-            </div>}
-
             {/* Table */}
-            {!isPageLoading &&
-                <DataTable
-                    columns={columns}
-                    data={subCategoryData}
-                    rowKey="_id"
-                    selectedRows={selectedSubCategory}
-                    toggleSelect={toggleSelect}
-                    toggleSelectAll={toggleSelectAll}
-                    onView={(row: IProductCategory) => console.log(row)}
-                    onEdit={handleEdit}
-                    onDelete={(row: IProductCategory) => {
-                        setActiveSubCategory(row);
-                        setIsDeleteModalOpen(true);
-                    }}
-                />
-            }
+
+            <DataTable
+                columns={columns}
+                data={subCategoryData}
+                rowKey="_id"
+                isLoading={isPageLoading}
+                selectedRows={selectedSubCategory}
+                toggleSelect={toggleSelect}
+                toggleSelectAll={toggleSelectAll}
+                onView={(row: IProductCategory) => console.log(row)}
+                onEdit={handleEdit}
+                onDelete={(row: IProductCategory) => {
+                    setActiveSubCategory(row);
+                    setIsDeleteModalOpen(true);
+                }}
+            />
 
             {/* Pagination */}
             <TablePagination

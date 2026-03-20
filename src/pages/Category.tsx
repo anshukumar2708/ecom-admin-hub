@@ -149,29 +149,25 @@ export default function Category() {
                 />
             )}
 
-            {isPageLoading && <div className="w-full flex justify-center items-center h-[100vh]">
-                <p>Loading...</p>
-            </div>}
-
             {/* Categories Table */}
-            {!isPageLoading &&
-                <DataTable
-                    columns={columns}
-                    data={categoryData}
-                    rowKey="_id"
-                    selectedRows={selectedCategory}
-                    toggleSelect={toggleSelect}
-                    toggleSelectAll={toggleSelectAll}
+            <DataTable
+                columns={columns}
+                data={categoryData}
+                rowKey="_id"
+                isLoading={isPageLoading}
+                selectedRows={selectedCategory}
+                toggleSelect={toggleSelect}
+                toggleSelectAll={toggleSelectAll}
 
-                    onView={(row: IProductCategory) => console.log(row)}
+                onView={(row: IProductCategory) => console.log(row)}
 
-                    onEdit={(row: IProductCategory) => UpdateFormOpenHandler(row)}
+                onEdit={(row: IProductCategory) => UpdateFormOpenHandler(row)}
 
-                    onDelete={(row: IProductCategory) => {
-                        setActiveCategory(row);
-                        setIsDeleteModelOpen(true);
-                    }}
-                />}
+                onDelete={(row: IProductCategory) => {
+                    setActiveCategory(row);
+                    setIsDeleteModelOpen(true);
+                }}
+            />
 
             {/* Pagination */}
             <TablePagination
