@@ -27,7 +27,7 @@ export default function Category() {
     const [filter, setFilter] = useState<IFilter>({
         search: "",
         page: "1",
-        limit: ""
+        limit: "10"
     });
 
     const FetchProductCategory = useCallback(async () => {
@@ -176,7 +176,7 @@ export default function Category() {
             <TablePagination
                 page={Number(filter.page)}
                 total={1234}
-                limit={8}
+                limit={Number(filter?.limit)}
                 onPrev={() =>
                     setFilter((prev) => ({
                         ...prev,

@@ -30,7 +30,7 @@ axiosInstance.interceptors.request.use(
 
 // Response Interceptor (Global Error Handling)
 axiosInstance.interceptors.response.use(
-  (response) => response,
+  (response) => response?.data,
   (error) => {
 
     let message = "Something went wrong";
