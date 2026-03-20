@@ -43,6 +43,7 @@ const navigation: NavItem[] = [
     children: [
       { title: "All Products", href: "/products" },
       { title: "Categories", href: "/products/categories" },
+      { title: "Sub Categories", href: "/products/sub-categories" },
       { title: "Brands", href: "/products/brands" },
       { title: "Attributes", href: "/products/attributes" },
     ],
@@ -193,13 +194,13 @@ export function AdminSidebar() {
                         className={cn(
                           "flex h-5 min-w-5 items-center justify-center rounded-full px-1.5 text-xs font-semibold",
                           item.badgeVariant === "destructive" &&
-                            "bg-destructive text-destructive-foreground",
+                          "bg-destructive text-destructive-foreground",
                           item.badgeVariant === "success" &&
-                            "bg-success text-success-foreground",
+                          "bg-success text-success-foreground",
                           item.badgeVariant === "warning" &&
-                            "bg-warning text-warning-foreground",
+                          "bg-warning text-warning-foreground",
                           item.badgeVariant === "default" &&
-                            "bg-primary text-primary-foreground"
+                          "bg-primary text-primary-foreground"
                         )}
                       >
                         {item.badge}
