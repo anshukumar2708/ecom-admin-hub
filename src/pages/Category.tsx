@@ -18,7 +18,7 @@ export default function Category() {
     const [selectedCategory, setSelectedCategory] = useState<string[]>([]);
     const [isFormOpen, setIsFormOpen] = useState(false);
     const [isDeleteModelOpen, setIsDeleteModelOpen] = useState(false);
-    const [pageLoading, setPageLoading] = useState(true);
+    const [isPageLoading, setIsPageLoading] = useState(true);
     const [isLoading, setIsLoading] = useState(false);
     const [activeCategory, setActiveCategory] = useState(null);
     const [filter, setFilter] = useState<ICategoryFilter>({
@@ -44,7 +44,7 @@ export default function Category() {
         } catch (error) {
             console.error("get product category error:", error)
         } finally {
-            setPageLoading(false);
+            setIsPageLoading(false);
         }
     }, [filter])
 
@@ -130,10 +130,6 @@ export default function Category() {
         }
     ];
 
-    if (pageLoading) {
-        return <div className="w-full flex justify-center items-center h-[100vh]"><p>Loading...</p></div>
-    }
-
     return (
         <AdminLayout
             title="Categories"
@@ -153,24 +149,29 @@ export default function Category() {
                 />
             )}
 
+            {isPageLoading && <div className="w-full flex justify-center items-center h-[100vh]">
+                <p>Loading...</p>
+            </div>}
+
             {/* Categories Table */}
-            <DataTable
-                columns={columns}
-                data={categoryData}
-                rowKey="_id"
-                selectedRows={selectedCategory}
-                toggleSelect={toggleSelect}
-                toggleSelectAll={toggleSelectAll}
+            {!isPageLoading &&
+                <DataTable
+                    columns={columns}
+                    data={categoryData}
+                    rowKey="_id"
+                    selectedRows={selectedCategory}
+                    toggleSelect={toggleSelect}
+                    toggleSelectAll={toggleSelectAll}
 
-                onView={(row: IProductCategory) => console.log(row)}
+                    onView={(row: IProductCategory) => console.log(row)}
 
-                onEdit={(row: IProductCategory) => UpdateFormOpenHandler(row)}
+                    onEdit={(row: IProductCategory) => UpdateFormOpenHandler(row)}
 
-                onDelete={(row: IProductCategory) => {
-                    setActiveCategory(row);
-                    setIsDeleteModelOpen(true);
-                }}
-            />
+                    onDelete={(row: IProductCategory) => {
+                        setActiveCategory(row);
+                        setIsDeleteModelOpen(true);
+                    }}
+                />}
 
             {/* Pagination */}
             <TablePagination

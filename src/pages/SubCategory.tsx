@@ -12,15 +12,18 @@ import DataTable from "@/components/admin/DataTable";
 import DeleteModel from "@/components/admin/DeleteModel";
 import { SubCategoryForm } from "@/components/forms/SubCategoryForm";
 
-
 export default function SubCategory() {
-    const [categoryData, setCategoryData] = useState<IProductCategory[] | []>([]);
-    const [selectedCategory, setSelectedCategory] = useState<string[]>([]);
+    // Renamed states
+    const [subCategoryData, setSubCategoryData] = useState<IProductCategory[]>([]);
+    const [selectedSubCategory, setSelectedSubCategory] = useState<string[]>([]);
+    const [activeSubCategory, setActiveSubCategory] = useState<IProductCategory | null>(null);
+
     const [isFormOpen, setIsFormOpen] = useState(false);
-    const [isDeleteModelOpen, setIsDeleteModelOpen] = useState(false);
-    const [pageLoading, setPageLoading] = useState(true);
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+
+    const [isPageLoading, setIsPageLoading] = useState(true);
     const [isLoading, setIsLoading] = useState(false);
-    const [activeCategory, setActiveCategory] = useState(null);
+
     const [filter, setFilter] = useState<ICategoryFilter>({
         search: "",
         page: 1,
@@ -28,67 +31,71 @@ export default function SubCategory() {
         isActive: null
     });
 
-    const FetchProductCategory = useCallback(async () => {
+    // Fetch API
+    const fetchSubCategory = useCallback(async () => {
         try {
-
             const query: ICategoryParams = {
-                ...(filter?.search && { search: filter?.search }),
-                ...(filter?.page && { page: filter?.page }),
-                ...(filter?.limit && { limit: filter?.limit }),
-                ...(filter?.isActive !== null && { isActive: filter?.isActive }),
+                ...(filter?.search && { search: filter.search }),
+                ...(filter?.page && { page: filter.page }),
+                ...(filter?.limit && { limit: filter.limit }),
+                ...(filter?.isActive !== null && { isActive: filter.isActive }),
             };
 
             const response = await getProductCategory(query);
 
-            setCategoryData(response?.data?.data)
+            setSubCategoryData(response?.data?.data || []);
         } catch (error) {
-            console.error("get product category error:", error)
+            console.error("fetch subcategory error:", error);
         } finally {
-            setPageLoading(false);
+            setIsPageLoading(false);
         }
-    }, [filter])
+    }, [filter]);
 
     useEffect(() => {
-        FetchProductCategory()
-    }, [FetchProductCategory]);
+        fetchSubCategory();
+    }, [fetchSubCategory]);
 
-    const UpdateFormOpenHandler = (data: IProductCategory) => {
-        setActiveCategory(data);
+    // Edit handler
+    const handleEdit = (data: IProductCategory) => {
+        setActiveSubCategory(data);
         setIsFormOpen(true);
-    }
+    };
 
-    const DeleteProductCategoryApi = async (id: string, fileKey: string) => {
+    // Delete API
+    const handleDeleteSubCategory = async (id: string, fileKey: string) => {
         try {
-            setIsLoading(false);
+            setIsLoading(true);
+
             const response = await deleteProductCategory(id);
+
             if (response) {
-                toast.success("Product category deleted successfully");
+                toast.success("Subcategory deleted successfully");
                 await DeleteSingleFile({ fileKey });
-                FetchProductCategory();
-                setIsDeleteModelOpen(false);
+
+                fetchSubCategory();
+                setIsDeleteModalOpen(false);
             }
         } catch (error) {
-            console.error("get product category error:", error)
+            console.error("delete subcategory error:", error);
         } finally {
             setIsLoading(false);
         }
-    }
-
-    const toggleSelectAll = () => {
-        // if (selectedCategory.length === categories.length) {
-        //     setSelectedCategory([]);
-        // } else {
-        //     setSelectedCategory(categories.map((c) => c.id));
-        // }
     };
 
+    // Selection logic
     const toggleSelect = (id: string) => {
-        setSelectedCategory((prev) =>
-            prev.includes(id) ? prev.filter((c) => c !== id) : [...prev, id]
+        setSelectedSubCategory((prev) =>
+            prev.includes(id)
+                ? prev.filter((item) => item !== id)
+                : [...prev, id]
         );
     };
 
+    const toggleSelectAll = () => {
+        // implement if needed
+    };
 
+    // Table columns
     const columns = [
         {
             title: "Image",
@@ -115,68 +122,62 @@ export default function SubCategory() {
             title: "Status",
             dataIndex: "isActive",
             key: "isActive",
-            render: (value: boolean) =>
-                value ? "Active" : "Inactive",
+            render: (value: boolean) => (value ? "Active" : "Inactive"),
         },
         {
             title: "Display Order",
             dataIndex: "displayOrder",
             key: "displayOrder",
-            render: (value: number) => {
-                return (
-                    <p>{value ?? "N/A"}</p>
-                )
-            }
-        }
+            render: (value: number) => <p>{value ?? "N/A"}</p>,
+        },
     ];
-
-    if (pageLoading) {
-        return <div className="w-full flex justify-center items-center h-[100vh]"><p>Loading...</p></div>
-    }
 
     return (
         <AdminLayout
-            title="Categories"
-            subtitle="Manage your Categories catalog and inventory"
+            title="Sub Categories"
+            subtitle="Manage your subcategories catalog and inventory"
         >
-            {/* Actions Bar */}
+            {/* Actions */}
             <ActionBar
                 setFilter={setFilter}
                 openForm={() => setIsFormOpen(true)}
             />
 
             {/* Bulk Actions */}
-            {selectedCategory.length > 0 && (
+            {selectedSubCategory.length > 0 && (
                 <BulkActions
-                    selectedCount={selectedCategory.length}
+                    selectedCount={selectedSubCategory.length}
                     onDelete={() => console.log("delete selected")}
                 />
             )}
 
-            {/* Categories Table */}
-            <DataTable
-                columns={columns}
-                data={categoryData}
-                rowKey="_id"
-                selectedRows={selectedCategory}
-                toggleSelect={toggleSelect}
-                toggleSelectAll={toggleSelectAll}
+            {isPageLoading && <div className="w-full flex justify-center items-center h-[100vh]">
+                <p>Loading...</p>
+            </div>}
 
-                onView={(row: IProductCategory) => console.log(row)}
-
-                onEdit={(row: IProductCategory) => UpdateFormOpenHandler(row)}
-
-                onDelete={(row: IProductCategory) => {
-                    setActiveCategory(row);
-                    setIsDeleteModelOpen(true);
-                }}
-            />
+            {/* Table */}
+            {!isPageLoading &&
+                <DataTable
+                    columns={columns}
+                    data={subCategoryData}
+                    rowKey="_id"
+                    selectedRows={selectedSubCategory}
+                    toggleSelect={toggleSelect}
+                    toggleSelectAll={toggleSelectAll}
+                    onView={(row: IProductCategory) => console.log(row)}
+                    onEdit={handleEdit}
+                    onDelete={(row: IProductCategory) => {
+                        setActiveSubCategory(row);
+                        setIsDeleteModalOpen(true);
+                    }}
+                />
+            }
 
             {/* Pagination */}
             <TablePagination
                 page={Number(filter.page)}
-                total={1234}
-                limit={Number(filter?.limit)}
+                total={1234} // 👉 replace with API total
+                limit={Number(filter.limit)}
                 onPrev={() =>
                     setFilter((prev) => ({
                         ...prev,
@@ -191,27 +192,35 @@ export default function SubCategory() {
                 }
             />
 
-            {isDeleteModelOpen &&
+            {/* Delete Modal */}
+            {isDeleteModalOpen && (
                 <DeleteModel
-                    isOpen={isDeleteModelOpen}
+                    isOpen={isDeleteModalOpen}
                     onClose={() => {
-                        setActiveCategory(null);
+                        setActiveSubCategory(null);
+                        setIsDeleteModalOpen(false);
                     }}
-                    title="Do you want to delete this category?"
+                    title="Do you want to delete this sub category?"
                     message=""
                     isLoading={isLoading}
-                    onSubmit={() => DeleteProductCategoryApi(activeCategory?._id, activeCategory?.image)}
+                    onSubmit={() =>
+                        handleDeleteSubCategory(
+                            activeSubCategory?._id,
+                            activeSubCategory?.image
+                        )
+                    }
                 />
-            }
+            )}
 
-            {isFormOpen &&
+            {/* Form */}
+            {isFormOpen && (
                 <SubCategoryForm
                     open={isFormOpen}
                     closeForm={() => setIsFormOpen(false)}
-                    FetchProductCategory={FetchProductCategory}
-                    updateData={activeCategory}
+                    FetchProductSubCategory={fetchSubCategory}
+                    updateData={activeSubCategory}
                 />
-            }
+            )}
 
         </AdminLayout>
     );
