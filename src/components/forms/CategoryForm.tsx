@@ -15,7 +15,7 @@ import { Trash2, Upload } from "lucide-react";
 import { DeleteSingleFile, UploadSingleFile } from "@/services/uploadFile";
 import { addProductCategory, updateProductCategory } from "@/services/productService";
 import { toast } from "sonner";
-import { IProductCategory } from "@/types/product.category.type";
+import { ICategoryFormData, IProductCategory } from "@/types/product.category.type";
 import { mediaUrl } from "@/utils/helper";
 
 interface ProductFormProps {
@@ -24,16 +24,9 @@ interface ProductFormProps {
     FetchProductCategory: () => void;
     updateData: IProductCategory
 }
-interface IFormData {
-    name: string,
-    image: string,
-    description: string,
-    isActive: boolean,
-    displayOrder: number | null
-}
 
 export function CategoryForm({ open, closeForm, FetchProductCategory, updateData }: ProductFormProps) {
-    const [formData, setFormData] = useState<IFormData>({
+    const [formData, setFormData] = useState<ICategoryFormData>({
         name: "",
         image: "",
         description: "",

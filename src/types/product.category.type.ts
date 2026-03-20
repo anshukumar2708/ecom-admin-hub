@@ -1,3 +1,24 @@
+export interface ICategoryFilter {
+    search: string,
+    page: number,
+    limit: number,
+    isActive: boolean
+}
+export interface ICategoryParams {
+    search?: string,
+    page?: number,
+    limit?: number,
+    isActive?: boolean
+}
+
+export interface ICategoryFormData {
+    name: string,
+    image: string,
+    description: string,
+    isActive: boolean,
+    displayOrder: number | null
+}
+
 export interface IProductCategory {
   _id: string;
   name: string;

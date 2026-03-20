@@ -3,7 +3,7 @@ import { AdminLayout } from "@/components/layout/AdminLayout";
 import { CategoryForm } from "@/components/forms/CategoryForm";
 import { deleteProductCategory, getProductCategory } from "@/services/productService";
 import { mediaUrl } from "@/utils/helper";
-import { IProductCategory } from "@/types/product.category.type";
+import { ICategoryFilter, ICategoryParams, IProductCategory } from "@/types/product.category.type";
 import { toast } from "sonner";
 import { DeleteSingleFile } from "@/services/uploadFile";
 import ActionBar from "@/components/admin/ActionBar";
@@ -12,11 +12,6 @@ import TablePagination from "@/components/admin/TablePagination";
 import DataTable from "@/components/admin/DataTable";
 import DeleteModel from "@/components/admin/DeleteModel";
 
-export interface IFilter {
-    search: string,
-    page: string,
-    limit: string,
-}
 
 export default function Category() {
     const [categoryData, setCategoryData] = useState<IProductCategory[] | []>([]);
@@ -26,21 +21,22 @@ export default function Category() {
     const [pageLoading, setPageLoading] = useState(true);
     const [isLoading, setIsLoading] = useState(false);
     const [activeCategory, setActiveCategory] = useState(null);
-    const [filter, setFilter] = useState<IFilter>({
+    const [filter, setFilter] = useState<ICategoryFilter>({
         search: "",
-        page: "1",
-        limit: "10"
+        page: 1,
+        limit: 10,
+        isActive: null
     });
 
     const FetchProductCategory = useCallback(async () => {
         try {
-            const params = new URLSearchParams();
 
-            if (filter.search) params.append("search", filter.search);
-            if (filter.page) params.append("page", filter.page);
-            if (filter.limit) params.append("limit", filter.limit);
-
-            const query = params.toString() ? `?${params.toString()}` : "";
+            const query: ICategoryParams = {
+                ...(filter?.search && { search: filter?.search }),
+                ...(filter?.page && { page: filter?.page }),
+                ...(filter?.limit && { limit: filter?.limit }),
+                ...(filter?.isActive !== null && { isActive: filter?.isActive }),
+            };
 
             const response = await getProductCategory(query);
 
@@ -184,13 +180,13 @@ export default function Category() {
                 onPrev={() =>
                     setFilter((prev) => ({
                         ...prev,
-                        page: String(Number(prev.page) - 1),
+                        page: prev.page - 1,
                     }))
                 }
                 onNext={() =>
                     setFilter((prev) => ({
                         ...prev,
-                        page: String(Number(prev.page) + 1),
+                        page: prev.page + 1,
                     }))
                 }
             />

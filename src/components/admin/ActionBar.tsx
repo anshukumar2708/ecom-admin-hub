@@ -3,10 +3,10 @@ import { Download, Filter, Plus, Search, Upload } from 'lucide-react'
 import { Input } from '../ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select'
 import { Button } from '../ui/button'
-import { IFilter } from '@/pages/Category';
+import { ICategoryFilter } from '@/types/product.category.type';
 
 interface IProps {
-    setFilter: React.Dispatch<React.SetStateAction<IFilter>>;
+    setFilter: React.Dispatch<React.SetStateAction<ICategoryFilter>>;
     openForm: () => void;
 }
 
@@ -27,6 +27,13 @@ const ActionBar = ({ setFilter, openForm }: IProps) => {
 
     }, [searchQuery, setFilter]);
 
+    const handleStatusFilter = (value: string) => {
+        setFilter((prev) => ({
+            ...prev,
+            isActive: value === "all" ? null : value === "active" ? true : false
+        }))
+    }
+
     return (
         <div className="flex flex-col sm:flex-row gap-4 mb-6">
             <div className="flex-1 flex gap-3">
@@ -39,14 +46,17 @@ const ActionBar = ({ setFilter, openForm }: IProps) => {
                         onChange={(event) => setSearchQuery(event.target.value)}
                     />
                 </div>
-                <Select defaultValue="all">
+                <Select
+                    defaultValue="all"
+                    onValueChange={handleStatusFilter}
+                >
                     <SelectTrigger className="w-36">
                         <SelectValue placeholder="Status" />
                     </SelectTrigger>
                     <SelectContent>
                         <SelectItem value="all">All Status</SelectItem>
                         <SelectItem value="active">Active</SelectItem>
-                        <SelectItem value="inactive">InActive</SelectItem>
+                        <SelectItem value="inActive">InActive</SelectItem>
                     </SelectContent>
                 </Select>
                 <Button variant="outline" size="icon">
