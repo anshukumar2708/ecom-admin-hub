@@ -43,6 +43,7 @@ export function CategoryForm({ open, closeForm, FetchProductCategory, updateData
     const [imageFile, setImageFile] = useState(null);
     const [imagePreview, setImagePreview] = useState("");
 
+    // prefield data on edit
     useEffect(() => {
         if (updateData?._id) {
             setFormData(() => ({
@@ -92,11 +93,11 @@ export function CategoryForm({ open, closeForm, FetchProductCategory, updateData
 
             if (imageFile) {
                 const mediaResponse = await UploadSingleFile({ file: imageFile });
-                if (mediaResponse?.data?.data?.key) {
+                if (mediaResponse?.data?.key) {
                     if (updateData?._id && formData?.image) {
                         await DeleteSingleFile({ fileKey: formData?.image });
                     }
-                    payLoad.image = mediaResponse.data.data.key;
+                    payLoad.image = mediaResponse?.data?.key;
                 }
             }
 
