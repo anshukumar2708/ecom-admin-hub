@@ -12,7 +12,6 @@ import TablePagination from "@/components/admin/TablePagination";
 import DataTable from "@/components/admin/DataTable";
 import DeleteModel from "@/components/admin/DeleteModel";
 
-
 export default function Category() {
     const [categoryData, setCategoryData] = useState<IProductCategory[] | []>([]);
     const [selectedCategory, setSelectedCategory] = useState<string[]>([]);
@@ -88,7 +87,6 @@ export default function Category() {
         );
     };
 
-
     const columns = [
         {
             title: "Image",
@@ -137,6 +135,7 @@ export default function Category() {
         >
             {/* Actions Bar */}
             <ActionBar
+                addBtnTitle="Add Product Category"
                 setFilter={setFilter}
                 openForm={() => setIsFormOpen(true)}
             />

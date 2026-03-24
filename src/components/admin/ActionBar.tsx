@@ -6,11 +6,12 @@ import { Button } from '../ui/button'
 import { ICategoryFilter } from '@/types/product.category.type';
 
 interface IProps {
+    addBtnTitle: string;
     setFilter: React.Dispatch<React.SetStateAction<ICategoryFilter>>;
     openForm: () => void;
 }
 
-const ActionBar = ({ setFilter, openForm }: IProps) => {
+const ActionBar = ({ addBtnTitle, setFilter, openForm }: IProps) => {
     const [searchQuery, setSearchQuery] = useState<string>("");
 
     useEffect(() => {
@@ -74,7 +75,7 @@ const ActionBar = ({ setFilter, openForm }: IProps) => {
                 </Button>
                 <Button className="gap-2" onClick={openForm}>
                     <Plus className="h-4 w-4" />
-                    Add Product Category
+                    {addBtnTitle}
                 </Button>
             </div>
         </div>

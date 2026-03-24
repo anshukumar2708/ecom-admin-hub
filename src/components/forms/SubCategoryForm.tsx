@@ -13,16 +13,16 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Trash2, Upload } from "lucide-react";
 import { DeleteSingleFile, UploadSingleFile } from "@/services/uploadFile";
-import { addProductCategory, updateProductCategory } from "@/services/productService";
+import { addProductCategory, addSubCategory, updateProductCategory } from "@/services/productService";
 import { toast } from "sonner";
-import { ICategoryFormData, IProductCategory } from "@/types/product.category.type";
 import { mediaUrl } from "@/utils/helper";
+import { ISubCategory, ISubCategoryFormData } from "@/types/sub.category.type";
 
 interface SubCategoryFormProps {
     open: boolean;
     closeForm: () => void;
     FetchProductSubCategory: () => void;
-    updateData: IProductCategory | null;
+    updateData: ISubCategory | null;
 }
 
 export function SubCategoryForm({
@@ -32,8 +32,9 @@ export function SubCategoryForm({
     updateData
 }: SubCategoryFormProps) {
 
-    const [formData, setFormData] = useState<ICategoryFormData>({
+    const [formData, setFormData] = useState<ISubCategoryFormData>({
         name: "",
+        slug: "",
         image: "",
         description: "",
         isActive: true,
@@ -43,11 +44,12 @@ export function SubCategoryForm({
     const [imageFile, setImageFile] = useState<File | null>(null);
     const [imagePreview, setImagePreview] = useState<string>("");
 
-    // ✅ Prefill data (Edit mode)
+    // Prefill data (Edit mode)
     useEffect(() => {
         if (updateData?._id) {
             setFormData({
                 name: updateData.name || "",
+                slug: updateData.slug || "",
                 image: updateData.image || "",
                 description: updateData.description || "",
                 isActive: updateData.isActive ?? true,
@@ -56,7 +58,7 @@ export function SubCategoryForm({
         }
     }, [updateData]);
 
-    // ✅ File change
+    // File change
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
         if (file) {
@@ -65,7 +67,7 @@ export function SubCategoryForm({
         }
     };
 
-    // ✅ Remove image
+    // Remove image
     const handleRemoveImage = (e: React.MouseEvent) => {
         e.preventDefault();
         setImagePreview("");
@@ -73,10 +75,11 @@ export function SubCategoryForm({
         setFormData((prev) => ({ ...prev, image: "" }));
     };
 
-    // ✅ Reset form
+    // Reset form
     const resetForm = () => {
         setFormData({
             name: "",
+            slug: "",
             image: "",
             description: "",
             isActive: true,
@@ -86,7 +89,7 @@ export function SubCategoryForm({
         setImagePreview("");
     };
 
-    // ✅ Submit
+    // Submit
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
@@ -107,7 +110,7 @@ export function SubCategoryForm({
 
             const response = updateData?._id
                 ? await updateProductCategory(updateData._id, payload)
-                : await addProductCategory(payload);
+                : await addSubCategory(payload);
 
             if (response) {
                 FetchProductSubCategory();
@@ -124,7 +127,6 @@ export function SubCategoryForm({
 
         } catch (error) {
             console.error("Subcategory submit error:", error);
-            toast.error("Something went wrong");
         }
     };
 
@@ -140,17 +142,36 @@ export function SubCategoryForm({
                 <form onSubmit={handleSubmit} className="space-y-6">
 
                     {/* Name */}
-                    <div className="space-y-2">
-                        <Label htmlFor="name">Subcategory Name *</Label>
-                        <Input
-                            id="name"
-                            placeholder="Enter subcategory name"
-                            value={formData.name}
-                            onChange={(e) =>
-                                setFormData({ ...formData, name: e.target.value })
-                            }
-                            required
-                        />
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+                        {/* Subcategory Name */}
+                        <div className="space-y-2">
+                            <Label htmlFor="name">Subcategory Name *</Label>
+                            <Input
+                                id="name"
+                                placeholder="Enter subcategory name"
+                                value={formData.name}
+                                onChange={(e) =>
+                                    setFormData({ ...formData, name: e.target.value })
+                                }
+                                required
+                            />
+                        </div>
+
+                        {/* Slug */}
+                        <div className="space-y-2">
+                            <Label htmlFor="slug">Slug *</Label>
+                            <Input
+                                id="slug"
+                                placeholder="Enter slug"
+                                value={formData.slug}
+                                onChange={(e) =>
+                                    setFormData({ ...formData, slug: e.target.value })
+                                }
+                                required
+                            />
+                        </div>
+
                     </div>
 
                     {/* Image */}

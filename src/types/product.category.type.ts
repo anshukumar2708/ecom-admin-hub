@@ -13,6 +13,7 @@ export interface ICategoryParams {
 
 export interface ICategoryFormData {
     name: string,
+    slug?: string,
     image: string,
     description: string,
     isActive: boolean,

@@ -1,8 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { AdminLayout } from "@/components/layout/AdminLayout";
-import { deleteProductCategory, getProductCategory } from "@/services/productService";
+import { deleteProductCategory, getProductSubCategory } from "@/services/productService";
 import { mediaUrl } from "@/utils/helper";
-import { ICategoryFilter, ICategoryParams, IProductCategory } from "@/types/product.category.type";
 import { toast } from "sonner";
 import { DeleteSingleFile } from "@/services/uploadFile";
 import ActionBar from "@/components/admin/ActionBar";
@@ -11,12 +10,13 @@ import TablePagination from "@/components/admin/TablePagination";
 import DataTable from "@/components/admin/DataTable";
 import DeleteModel from "@/components/admin/DeleteModel";
 import { SubCategoryForm } from "@/components/forms/SubCategoryForm";
+import { ISubCategory, ISubCategoryFilter, ISubCategoryParams } from "@/types/sub.category.type";
 
 export default function SubCategory() {
     // Renamed states
-    const [subCategoryData, setSubCategoryData] = useState<IProductCategory[]>([]);
+    const [subCategoryData, setSubCategoryData] = useState<ISubCategory[]>([]);
     const [selectedSubCategory, setSelectedSubCategory] = useState<string[]>([]);
-    const [activeSubCategory, setActiveSubCategory] = useState<IProductCategory | null>(null);
+    const [activeSubCategory, setActiveSubCategory] = useState<ISubCategory | null>(null);
 
     const [isFormOpen, setIsFormOpen] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -24,7 +24,7 @@ export default function SubCategory() {
     const [isPageLoading, setIsPageLoading] = useState(true);
     const [isLoading, setIsLoading] = useState(false);
 
-    const [filter, setFilter] = useState<ICategoryFilter>({
+    const [filter, setFilter] = useState<ISubCategoryFilter>({
         search: "",
         page: 1,
         limit: 10,
@@ -34,16 +34,18 @@ export default function SubCategory() {
     // Fetch API
     const fetchSubCategory = useCallback(async () => {
         try {
-            const query: ICategoryParams = {
+            const query: ISubCategoryParams = {
                 ...(filter?.search && { search: filter.search }),
                 ...(filter?.page && { page: filter.page }),
                 ...(filter?.limit && { limit: filter.limit }),
                 ...(filter?.isActive !== null && { isActive: filter.isActive }),
             };
 
-            const response = await getProductCategory(query);
+            const response = await getProductSubCategory(query);
 
-            setSubCategoryData(response?.data?.data || []);
+            console.log("subCategoryData", response);
+
+            setSubCategoryData(response?.data || []);
         } catch (error) {
             console.error("fetch subcategory error:", error);
         } finally {
@@ -56,7 +58,7 @@ export default function SubCategory() {
     }, [fetchSubCategory]);
 
     // Edit handler
-    const handleEdit = (data: IProductCategory) => {
+    const handleEdit = (data: ISubCategory) => {
         setActiveSubCategory(data);
         setIsFormOpen(true);
     };
@@ -139,6 +141,7 @@ export default function SubCategory() {
         >
             {/* Actions */}
             <ActionBar
+                addBtnTitle="Add Sub Category"
                 setFilter={setFilter}
                 openForm={() => setIsFormOpen(true)}
             />
@@ -152,7 +155,6 @@ export default function SubCategory() {
             )}
 
             {/* Table */}
-
             <DataTable
                 columns={columns}
                 data={subCategoryData}
@@ -161,9 +163,9 @@ export default function SubCategory() {
                 selectedRows={selectedSubCategory}
                 toggleSelect={toggleSelect}
                 toggleSelectAll={toggleSelectAll}
-                onView={(row: IProductCategory) => console.log(row)}
+                onView={(row: ISubCategory) => console.log(row)}
                 onEdit={handleEdit}
-                onDelete={(row: IProductCategory) => {
+                onDelete={(row: ISubCategory) => {
                     setActiveSubCategory(row);
                     setIsDeleteModalOpen(true);
                 }}
