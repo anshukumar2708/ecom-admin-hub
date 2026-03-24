@@ -15,6 +15,7 @@ export interface ISubCategoryFormData {
     name: string,
     slug: string,
     image: string,
+    category: string,
     description: string,
     isActive: boolean,
     displayOrder: number | null

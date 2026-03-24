@@ -6,7 +6,7 @@ export const addProductCategory = (payLoad: ICategoryFormData) => {
     return axiosInstance.post("/product/category", payLoad);
 }
 
-export const getProductCategory = (params: ICategoryParams) => {
+export const getProductCategory = (params?: ICategoryParams) => {
     return axiosInstance.get("/product/category", {
         params: params
     });

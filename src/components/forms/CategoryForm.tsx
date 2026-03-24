@@ -119,15 +119,37 @@ export function CategoryForm({ open, closeForm, FetchProductCategory, updateData
                 </DialogHeader>
                 <form onSubmit={handleSubmit} className="space-y-6">
 
-                    <div className="space-y-2">
-                        <Label htmlFor="name">Category Name *</Label>
-                        <Input
-                            id="name"
-                            placeholder="Enter category name"
-                            value={formData.name}
-                            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                            required
-                        />
+                    {/* Name */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+                        {/* Subcategory Name */}
+                        <div className="space-y-2">
+                            <Label htmlFor="name">Category Name *</Label>
+                            <Input
+                                id="name"
+                                placeholder="Enter subcategory name"
+                                value={formData.name}
+                                onChange={(e) =>
+                                    setFormData({ ...formData, name: e.target.value })
+                                }
+                                required
+                            />
+                        </div>
+
+                        {/* Slug */}
+                        <div className="space-y-2">
+                            <Label htmlFor="slug">Slug *</Label>
+                            <Input
+                                id="slug"
+                                placeholder="Enter slug"
+                                value={formData.slug}
+                                onChange={(e) =>
+                                    setFormData({ ...formData, slug: e.target.value })
+                                }
+                                required
+                            />
+                        </div>
+
                     </div>
 
                     <div className="space-y-2">

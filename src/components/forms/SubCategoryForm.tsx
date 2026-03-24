@@ -13,10 +13,11 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Trash2, Upload } from "lucide-react";
 import { DeleteSingleFile, UploadSingleFile } from "@/services/uploadFile";
-import { addProductCategory, addSubCategory, updateProductCategory } from "@/services/productService";
+import { addSubCategory, getProductCategory, updateProductCategory } from "@/services/productService";
 import { toast } from "sonner";
 import { mediaUrl } from "@/utils/helper";
 import { ISubCategory, ISubCategoryFormData } from "@/types/sub.category.type";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 
 interface SubCategoryFormProps {
     open: boolean;
@@ -31,11 +32,13 @@ export function SubCategoryForm({
     FetchProductSubCategory,
     updateData
 }: SubCategoryFormProps) {
+    const [categoryData, setCategoryData] = useState([])
 
     const [formData, setFormData] = useState<ISubCategoryFormData>({
         name: "",
         slug: "",
         image: "",
+        category: "",
         description: "",
         isActive: true,
         displayOrder: null
@@ -51,12 +54,26 @@ export function SubCategoryForm({
                 name: updateData.name || "",
                 slug: updateData.slug || "",
                 image: updateData.image || "",
+                category: "",
                 description: updateData.description || "",
                 isActive: updateData.isActive ?? true,
                 displayOrder: updateData.displayOrder ?? null
             });
         }
     }, [updateData]);
+
+    useEffect(() => {
+        const fetchCategories = async () => {
+            try {
+                const response = await getProductCategory();
+                setCategoryData(response?.data?.data);
+            } catch (error) {
+                console.error("get product category error:", error);
+            }
+        };
+
+        fetchCategories();
+    }, []);
 
     // File change
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -81,6 +98,7 @@ export function SubCategoryForm({
             name: "",
             slug: "",
             image: "",
+            category: "",
             description: "",
             isActive: true,
             displayOrder: null
@@ -172,6 +190,26 @@ export function SubCategoryForm({
                             />
                         </div>
 
+                    </div>
+
+                    {/* Category */}
+                    <div className="space-y-2">
+                        <Label htmlFor="category">Category *</Label>
+                        <Select
+                            value={formData.category}
+                            onValueChange={(value) => setFormData({ ...formData, category: value })}
+                        >
+                            <SelectTrigger>
+                                <SelectValue placeholder="Select category" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {categoryData?.map((item, index) => (
+                                    < SelectItem key={index} value={item?._id}>
+                                        {item?.name}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
                     </div>
 
                     {/* Image */}
