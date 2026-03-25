@@ -16,19 +16,20 @@ import { DeleteSingleFile, UploadSingleFile } from "@/services/uploadFile";
 import { addProductCategory, updateProductCategory } from "@/services/productService";
 import { toast } from "sonner";
 import { ICategoryFormData, IProductCategory } from "@/types/product.category.type";
-import { mediaUrl } from "@/utils/helper";
+import { generateSlug, mediaUrl } from "@/utils/helper";
 
 interface ProductFormProps {
     open: boolean;
     closeForm: () => void;
-    FetchProductCategory: () => void;
+    fetchProductCategory: () => void;
     updateData: IProductCategory
 }
 
-export function CategoryForm({ open, closeForm, FetchProductCategory, updateData }: ProductFormProps) {
+export function CategoryForm({ open, closeForm, fetchProductCategory, updateData }: ProductFormProps) {
     const [formData, setFormData] = useState<ICategoryFormData>({
         name: "",
         image: "",
+        slug: "",
         description: "",
         isActive: true,
         displayOrder: null
@@ -42,6 +43,7 @@ export function CategoryForm({ open, closeForm, FetchProductCategory, updateData
             setFormData(() => ({
                 name: updateData?.name,
                 image: updateData?.image,
+                slug: updateData?.slug,
                 description: updateData?.description,
                 isActive: updateData?.isActive,
                 displayOrder: updateData?.displayOrder
@@ -72,6 +74,7 @@ export function CategoryForm({ open, closeForm, FetchProductCategory, updateData
         setFormData(() => ({
             name: "",
             image: "",
+            slug: "",
             description: "",
             isActive: true,
             displayOrder: null
@@ -99,7 +102,7 @@ export function CategoryForm({ open, closeForm, FetchProductCategory, updateData
                 : await addProductCategory(payLoad);
 
             if (response) {
-                FetchProductCategory();
+                fetchProductCategory();
                 clearFormHandler();
                 toast.success("Product category added successfully");
                 closeForm();
@@ -107,7 +110,6 @@ export function CategoryForm({ open, closeForm, FetchProductCategory, updateData
 
         } catch (error) {
             console.log("Category post error", error);
-            toast.error("Something went wrong");
         }
     };
 
@@ -129,9 +131,13 @@ export function CategoryForm({ open, closeForm, FetchProductCategory, updateData
                                 id="name"
                                 placeholder="Enter subcategory name"
                                 value={formData.name}
-                                onChange={(e) =>
-                                    setFormData({ ...formData, name: e.target.value })
-                                }
+                                onChange={(e) => {
+                                    setFormData({
+                                        ...formData,
+                                        name: e.target.value,
+                                        slug: generateSlug(e.target.value)
+                                    })
+                                }}
                                 required
                             />
                         </div>

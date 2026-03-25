@@ -27,7 +27,7 @@ export default function Category() {
         isActive: null
     });
 
-    const FetchProductCategory = useCallback(async () => {
+    const fetchProductCategory = useCallback(async () => {
         try {
 
             const query: ICategoryParams = {
@@ -48,30 +48,44 @@ export default function Category() {
     }, [filter])
 
     useEffect(() => {
-        FetchProductCategory()
-    }, [FetchProductCategory]);
+        fetchProductCategory()
+    }, [fetchProductCategory]);
 
-    const UpdateFormOpenHandler = (data: IProductCategory) => {
+    const updateFormOpenHandler = (data: IProductCategory) => {
         setActiveCategory(data);
         setIsFormOpen(true);
     }
 
-    const DeleteProductCategoryApi = async (id: string, fileKey: string) => {
+    const deleteProductCategoryApi = async (id: string, fileKey?: string) => {
         try {
-            setIsLoading(false);
+            setIsLoading(true);
+
             const response = await deleteProductCategory(id);
-            if (response) {
+
+            if (response?.data?.success) {
                 toast.success("Product category deleted successfully");
-                await DeleteSingleFile({ fileKey });
-                FetchProductCategory();
+
+                // Delete file if exists
+                if (fileKey) {
+                    await DeleteSingleFile({ fileKey });
+                }
+
+                // Refresh list
+                await fetchProductCategory();
+
+                // Close modal
                 setIsDeleteModelOpen(false);
+            } else {
+                toast.error(response?.data?.message || "Failed to delete category");
             }
+
         } catch (error) {
-            console.error("get product category error:", error)
+            console.error("Delete product category error:", error);
+            toast.error(error?.response?.data?.message || "Something went wrong");
         } finally {
             setIsLoading(false);
         }
-    }
+    };
 
     const toggleSelectAll = () => {
         // if (selectedCategory.length === categories.length) {
@@ -160,7 +174,7 @@ export default function Category() {
 
                 onView={(row: IProductCategory) => console.log(row)}
 
-                onEdit={(row: IProductCategory) => UpdateFormOpenHandler(row)}
+                onEdit={(row: IProductCategory) => updateFormOpenHandler(row)}
 
                 onDelete={(row: IProductCategory) => {
                     setActiveCategory(row);
@@ -192,11 +206,12 @@ export default function Category() {
                     isOpen={isDeleteModelOpen}
                     onClose={() => {
                         setActiveCategory(null);
+                        setIsDeleteModelOpen(false);
                     }}
                     title="Do you want to delete this category?"
                     message=""
                     isLoading={isLoading}
-                    onSubmit={() => DeleteProductCategoryApi(activeCategory?._id, activeCategory?.image)}
+                    onSubmit={() => deleteProductCategoryApi(activeCategory?._id, activeCategory?.image)}
                 />
             }
 
@@ -204,7 +219,7 @@ export default function Category() {
                 < CategoryForm
                     open={isFormOpen}
                     closeForm={() => setIsFormOpen(false)}
-                    FetchProductCategory={FetchProductCategory}
+                    fetchProductCategory={fetchProductCategory}
                     updateData={activeCategory}
                 />
             }

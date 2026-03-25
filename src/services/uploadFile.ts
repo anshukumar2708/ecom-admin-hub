@@ -8,6 +8,6 @@ export const UploadSingleFile = (file) => {
     });
 }
 
-export const DeleteSingleFile = (payLoad) => {
+export const DeleteSingleFile = (payLoad: {fileKey: string}) => {
     return axiosInstance.post("delete-single-file", payLoad);
 }

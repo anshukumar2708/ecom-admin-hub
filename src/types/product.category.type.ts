@@ -13,7 +13,7 @@ export interface ICategoryParams {
 
 export interface ICategoryFormData {
     name: string,
-    slug?: string,
+    slug: string,
     image: string,
     description: string,
     isActive: boolean,
@@ -21,13 +21,14 @@ export interface ICategoryFormData {
 }
 
 export interface IProductCategory {
-  _id: string;
-  name: string;
-  image: string;
-  description: string;
-  isActive: boolean;
-  displayOrder: number | null
-  createdAt: string;
-  updatedAt: string;
-  __v: number;
+    _id: string;
+    name: string;
+    image: string;
+    slug: string;
+    description: string;
+    isActive: boolean;
+    displayOrder: number | null
+    createdAt: string;
+    updatedAt: string;
+    __v: number;
 }
