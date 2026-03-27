@@ -129,6 +129,7 @@ export function CategoryForm({ open, closeForm, fetchProductCategory, updateData
                             <Label htmlFor="name">Category Name *</Label>
                             <Input
                                 id="name"
+                                className="capitalize"
                                 placeholder="Enter subcategory name"
                                 value={formData.name}
                                 onChange={(e) => {

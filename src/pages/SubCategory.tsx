@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { AdminLayout } from "@/components/layout/AdminLayout";
-import { deleteProductCategory, getProductSubCategory } from "@/services/productService";
+import { deleteProductSubCategory, getProductSubCategory } from "@/services/productService";
 import { mediaUrl } from "@/utils/helper";
 import { toast } from "sonner";
 import { DeleteSingleFile } from "@/services/uploadFile";
@@ -45,7 +45,7 @@ export default function SubCategory() {
 
             console.log("subCategoryData", response);
 
-            setSubCategoryData(response?.data || []);
+            setSubCategoryData(response?.data?.data || []);
         } catch (error) {
             console.error("fetch subcategory error:", error);
         } finally {
@@ -68,11 +68,14 @@ export default function SubCategory() {
         try {
             setIsLoading(true);
 
-            const response = await deleteProductCategory(id);
+            const response = await deleteProductSubCategory(id);
 
             if (response) {
                 toast.success("Subcategory deleted successfully");
-                await DeleteSingleFile({ fileKey });
+
+                if (fileKey) {
+                    await DeleteSingleFile({ fileKey });
+                }
 
                 fetchSubCategory();
                 setIsDeleteModalOpen(false);

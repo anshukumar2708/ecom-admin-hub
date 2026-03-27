@@ -13,7 +13,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Trash2, Upload } from "lucide-react";
 import { DeleteSingleFile, UploadSingleFile } from "@/services/uploadFile";
-import { addSubCategory, getProductCategory, updateProductCategory } from "@/services/productService";
+import { addSubCategory, getProductCategory, updateProductSubCategory } from "@/services/productService";
 import { toast } from "sonner";
 import { mediaUrl } from "@/utils/helper";
 import { ISubCategory, ISubCategoryFormData } from "@/types/sub.category.type";
@@ -127,7 +127,7 @@ export function SubCategoryForm({
             }
 
             const response = updateData?._id
-                ? await updateProductCategory(updateData._id, payload)
+                ? await updateProductSubCategory(updateData._id, payload)
                 : await addSubCategory(payload);
 
             if (response) {
