@@ -38,7 +38,7 @@ export function SubCategoryForm({
         name: "",
         slug: "",
         image: "",
-        category: "",
+        categoryId: "",
         description: "",
         isActive: true,
         displayOrder: null
@@ -51,13 +51,13 @@ export function SubCategoryForm({
     useEffect(() => {
         if (updateData?._id) {
             setFormData({
-                name: updateData.name || "",
-                slug: updateData.slug || "",
-                image: updateData.image || "",
-                category: "",
-                description: updateData.description || "",
+                name: updateData?.name || "",
+                slug: updateData?.slug || "",
+                image: updateData?.image || "",
+                categoryId: updateData?.categoryId || null,
+                description: updateData?.description || "",
                 isActive: updateData.isActive ?? true,
-                displayOrder: updateData.displayOrder ?? null
+                displayOrder: updateData?.displayOrder ?? null
             });
         }
     }, [updateData]);
@@ -98,7 +98,7 @@ export function SubCategoryForm({
             name: "",
             slug: "",
             image: "",
-            category: "",
+            categoryId: "",
             description: "",
             isActive: true,
             displayOrder: null
@@ -196,8 +196,8 @@ export function SubCategoryForm({
                     <div className="space-y-2">
                         <Label htmlFor="category">Category *</Label>
                         <Select
-                            value={formData.category}
-                            onValueChange={(value) => setFormData({ ...formData, category: value })}
+                            value={formData.categoryId || ""}
+                            onValueChange={(value) => setFormData({ ...formData, categoryId: value })}
                         >
                             <SelectTrigger>
                                 <SelectValue placeholder="Select category" />
