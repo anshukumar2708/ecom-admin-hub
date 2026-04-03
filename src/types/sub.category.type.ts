@@ -25,6 +25,7 @@ export interface ISubCategory {
     _id: string;
     name: string;
     slug: string,
+    category: ICategory | null;
     image: string;
     description: string;
     categoryId: string;
@@ -33,4 +34,9 @@ export interface ISubCategory {
     createdAt: string;
     updatedAt: string;
     __v: number;
+}
+
+export interface ICategory {
+    _id: string;
+    name: string;
 }

@@ -43,8 +43,6 @@ export default function SubCategory() {
 
             const response = await getProductSubCategory(query);
 
-            console.log("subCategoryData", response);
-
             setSubCategoryData(response?.data?.data || []);
         } catch (error) {
             console.error("fetch subcategory error:", error);
@@ -117,6 +115,14 @@ export default function SubCategory() {
             title: "Name",
             dataIndex: "name",
             key: "name",
+        },
+        {
+            title: "Category",
+            dataIndex: "categoryId",
+            key: "categoryId",
+            render: (_, record: ISubCategory) => {
+                return record?.category?.name ?? "N/A";
+            }
         },
         {
             title: "Description",
