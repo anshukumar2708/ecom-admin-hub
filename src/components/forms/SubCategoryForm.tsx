@@ -15,7 +15,7 @@ import { Trash2, Upload } from "lucide-react";
 import { DeleteSingleFile, UploadSingleFile } from "@/services/uploadFile";
 import { addSubCategory, getProductCategory, updateProductSubCategory } from "@/services/productService";
 import { toast } from "sonner";
-import { mediaUrl } from "@/utils/helper";
+import { generateSlug, mediaUrl } from "@/utils/helper";
 import { ISubCategory, ISubCategoryFormData } from "@/types/sub.category.type";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 
@@ -47,20 +47,8 @@ export function SubCategoryForm({
     const [imageFile, setImageFile] = useState<File | null>(null);
     const [imagePreview, setImagePreview] = useState<string>("");
 
-    // Prefill data (Edit mode)
-    useEffect(() => {
-        if (updateData?._id) {
-            setFormInputData({
-                name: updateData?.name || "",
-                slug: updateData?.slug || "",
-                image: updateData?.image || "",
-                categoryId: updateData?.categoryId || null,
-                description: updateData?.description || "",
-                isActive: updateData.isActive ?? true,
-                displayOrder: updateData?.displayOrder ?? null
-            });
-        }
-    }, [updateData]);
+    console.log("updateData in form", formInputData);
+
 
     useEffect(() => {
         const fetchCategories = async () => {
@@ -74,6 +62,21 @@ export function SubCategoryForm({
 
         fetchCategories();
     }, []);
+
+    // Prefill data (Edit mode)
+    useEffect(() => {
+        if (updateData?._id && categoryData?.length) {
+            setFormInputData({
+                name: updateData?.name || "",
+                slug: updateData?.slug || "",
+                image: updateData?.image || "",
+                categoryId: updateData?.categoryId || "",
+                description: updateData?.description || "",
+                isActive: updateData.isActive ?? true,
+                displayOrder: updateData?.displayOrder ?? null
+            });
+        }
+    }, [updateData, categoryData]);
 
     // File change
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -173,9 +176,13 @@ export function SubCategoryForm({
                                 id="name"
                                 placeholder="Enter subcategory name"
                                 value={formInputData.name}
-                                onChange={(e) =>
-                                    setFormInputData({ ...formInputData, name: e.target.value })
-                                }
+                                onChange={(e) => {
+                                    setFormInputData({
+                                        ...formInputData,
+                                        name: e.target.value,
+                                        slug: generateSlug(e.target.value)
+                                    })
+                                }}
                                 required
                             />
                         </div>
@@ -200,7 +207,7 @@ export function SubCategoryForm({
                     <div className="space-y-2">
                         <Label htmlFor="category">Category *</Label>
                         <Select
-                            value={formInputData.categoryId || ""}
+                            value={formInputData?.categoryId || ""}
                             onValueChange={(value) => setFormInputData({ ...formInputData, categoryId: value })}
                         >
                             <SelectTrigger>
@@ -209,7 +216,10 @@ export function SubCategoryForm({
                             <SelectContent>
                                 {categoryData?.map((item, index) => (
                                     < SelectItem key={index} value={item?._id}>
-                                        {item?.name}
+                                        <div className="flex justify-start items-center">
+                                            <img src={mediaUrl(item?.image)}
+                                                className="w-7 h-auto" alt="category-icon" /> <span className="ml-2">{item?.name}</span>
+                                        </div>
                                     </SelectItem>
                                 ))}
                             </SelectContent>
