@@ -34,7 +34,7 @@ export function SubCategoryForm({
 }: SubCategoryFormProps) {
     const [categoryData, setCategoryData] = useState([])
 
-    const [formData, setFormData] = useState<ISubCategoryFormData>({
+    const [formInputData, setFormInputData] = useState<ISubCategoryFormData>({
         name: "",
         slug: "",
         image: "",
@@ -50,7 +50,7 @@ export function SubCategoryForm({
     // Prefill data (Edit mode)
     useEffect(() => {
         if (updateData?._id) {
-            setFormData({
+            setFormInputData({
                 name: updateData?.name || "",
                 slug: updateData?.slug || "",
                 image: updateData?.image || "",
@@ -89,12 +89,12 @@ export function SubCategoryForm({
         e.preventDefault();
         setImagePreview("");
         setImageFile(null);
-        setFormData((prev) => ({ ...prev, image: "" }));
+        setFormInputData((prev) => ({ ...prev, image: "" }));
     };
 
     // Reset form
     const resetForm = () => {
-        setFormData({
+        setFormInputData({
             name: "",
             slug: "",
             image: "",
@@ -112,15 +112,19 @@ export function SubCategoryForm({
         e.preventDefault();
 
         try {
-            const payload = { ...formData };
+            const payload = { ...formInputData };
+
+            const formData = new FormData();
+            formData.append("file", imageFile);
+            formData.append("folder", "images/subcategories");
 
             // Upload image
             if (imageFile) {
-                const mediaResponse = await UploadSingleFile({ file: imageFile });
+                const mediaResponse = await UploadSingleFile(formData);
 
                 if (mediaResponse?.data?.key) {
-                    if (updateData?._id && formData.image) {
-                        await DeleteSingleFile({ fileKey: formData.image });
+                    if (updateData?._id && formInputData?.image) {
+                        await DeleteSingleFile({ fileKey: formInputData?.image });
                     }
                     payload.image = mediaResponse.data.key;
                 }
@@ -168,9 +172,9 @@ export function SubCategoryForm({
                             <Input
                                 id="name"
                                 placeholder="Enter subcategory name"
-                                value={formData.name}
+                                value={formInputData.name}
                                 onChange={(e) =>
-                                    setFormData({ ...formData, name: e.target.value })
+                                    setFormInputData({ ...formInputData, name: e.target.value })
                                 }
                                 required
                             />
@@ -182,9 +186,9 @@ export function SubCategoryForm({
                             <Input
                                 id="slug"
                                 placeholder="Enter slug"
-                                value={formData.slug}
+                                value={formInputData.slug}
                                 onChange={(e) =>
-                                    setFormData({ ...formData, slug: e.target.value })
+                                    setFormInputData({ ...formInputData, slug: e.target.value })
                                 }
                                 required
                             />
@@ -196,8 +200,8 @@ export function SubCategoryForm({
                     <div className="space-y-2">
                         <Label htmlFor="category">Category *</Label>
                         <Select
-                            value={formData.categoryId || ""}
-                            onValueChange={(value) => setFormData({ ...formData, categoryId: value })}
+                            value={formInputData.categoryId || ""}
+                            onValueChange={(value) => setFormInputData({ ...formInputData, categoryId: value })}
                         >
                             <SelectTrigger>
                                 <SelectValue placeholder="Select category" />
@@ -220,10 +224,10 @@ export function SubCategoryForm({
                             htmlFor="image"
                             className="relative w-40 h-40 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center cursor-pointer overflow-hidden hover:border-indigo-500 transition group"
                         >
-                            {(imagePreview || formData.image) ? (
+                            {(imagePreview || formInputData?.image) ? (
                                 <>
                                     <img
-                                        src={imagePreview || mediaUrl(formData.image)}
+                                        src={imagePreview || mediaUrl(formInputData?.image)}
                                         alt="subcategory"
                                         className="w-full h-full object-cover"
                                     />
@@ -264,9 +268,9 @@ export function SubCategoryForm({
                             id="description"
                             placeholder="Enter subcategory description..."
                             rows={4}
-                            value={formData.description}
+                            value={formInputData.description}
                             onChange={(e) =>
-                                setFormData({ ...formData, description: e.target.value })
+                                setFormInputData({ ...formInputData, description: e.target.value })
                             }
                         />
                     </div>
@@ -279,10 +283,10 @@ export function SubCategoryForm({
                             <Input
                                 id="displayOrder"
                                 placeholder="Enter display order..."
-                                value={formData.displayOrder ?? ""}
+                                value={formInputData.displayOrder ?? ""}
                                 onChange={(e) =>
-                                    setFormData({
-                                        ...formData,
+                                    setFormInputData({
+                                        ...formInputData,
                                         displayOrder: Number(e.target.value)
                                     })
                                 }
@@ -292,9 +296,9 @@ export function SubCategoryForm({
                         <div className="space-y-2 flex items-center gap-3">
                             <Switch
                                 id="isActive"
-                                checked={formData.isActive}
+                                checked={formInputData.isActive}
                                 onCheckedChange={(checked) =>
-                                    setFormData({ ...formData, isActive: checked })
+                                    setFormInputData({ ...formInputData, isActive: checked })
                                 }
                             />
                             <Label htmlFor="isActive">Active Subcategory</Label>

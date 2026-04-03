@@ -87,8 +87,12 @@ export function CategoryForm({ open, closeForm, fetchProductCategory, updateData
         try {
             const payLoad = { ...formData };
 
+            const formDataObj = new FormData();
+            formDataObj.append("file", imageFile);
+            formDataObj.append("folder", "images/categories");
+
             if (imageFile) {
-                const mediaResponse = await UploadSingleFile({ file: imageFile });
+                const mediaResponse = await UploadSingleFile(formDataObj);
                 if (mediaResponse?.data?.key) {
                     if (updateData?._id && formData?.image) {
                         await DeleteSingleFile({ fileKey: formData?.image });

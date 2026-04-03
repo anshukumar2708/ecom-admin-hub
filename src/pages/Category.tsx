@@ -62,22 +62,22 @@ export default function Category() {
 
             const response = await deleteProductCategory(id);
 
-            if (response?.data?.success) {
-                toast.success("Product category deleted successfully");
+            console.log("delete category response", response);
 
-                // Delete file if exists
-                if (fileKey) {
-                    await DeleteSingleFile({ fileKey });
-                }
 
-                // Refresh list
-                await fetchProductCategory();
+            toast.success("Product category deleted successfully");
 
-                // Close modal
-                setIsDeleteModelOpen(false);
-            } else {
-                toast.error(response?.data?.message || "Failed to delete category");
+            // Delete file if exists
+            if (fileKey) {
+                await DeleteSingleFile({ fileKey });
             }
+
+            // Refresh list
+            await fetchProductCategory();
+
+            // Close modal
+            setIsDeleteModelOpen(false);
+
 
         } catch (error) {
             console.error("Delete product category error:", error);
