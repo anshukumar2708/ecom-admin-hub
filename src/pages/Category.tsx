@@ -122,6 +122,9 @@ export default function Category() {
             title: "Description",
             dataIndex: "description",
             key: "description",
+            render: (value: string) => (
+                <p>{value ? value : "N/A"}</p>
+            ),
         },
         {
             title: "Status",
