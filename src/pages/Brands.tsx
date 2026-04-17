@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { AdminLayout } from "@/components/layout/AdminLayout";
-import { deleteProductSubCategory, getProductCategory, getProductSubCategory } from "@/services/productService";
+import { getProductCategory, getProductSubCategory } from "@/services/productService";
 import { mediaUrl } from "@/utils/helper";
 import { toast } from "sonner";
 import { DeleteSingleFile } from "@/services/uploadFile";
@@ -9,7 +9,7 @@ import BulkActions from "@/components/admin/BulkActions";
 import TablePagination from "@/components/admin/TablePagination";
 import DataTable from "@/components/admin/DataTable";
 import DeleteModel from "@/components/admin/DeleteModel";
-import { ISubCategory, ISubCategoryFilter, ISubCategoryParams } from "@/types/sub.category.type";
+import { ISubCategoryFilter } from "@/types/sub.category.type";
 import { BrandForm } from "@/components/forms/BrandsForm";
 import { deleteBrand, getBrands } from "@/services/brandsService";
 import { IBrand, IBrandParams } from "@/types/brand.type";
@@ -158,14 +158,14 @@ export default function Brand() {
         },
         {
             title: "Category",
-            dataIndex: "categoryId",
-            key: "categoryId",
+            dataIndex: "category",
+            key: "category",
             render: (category: IBrand) => category?.name || "N/A",
         },
         {
             title: "Sub Category",
-            dataIndex: "subCategoryId",
-            key: "subCategoryId",
+            dataIndex: "subCategory",
+            key: "subCategory",
             render: (subCategory: IBrand) => subCategory?.name || "N/A",
         },
         {
