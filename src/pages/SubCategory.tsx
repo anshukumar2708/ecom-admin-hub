@@ -150,7 +150,7 @@ export default function SubCategory() {
         >
             {/* Actions */}
             <ActionBar
-                addBtnTitle="Add Sub Category"
+                addBtnTitle="Add SubCategory"
                 setFilter={setFilter}
                 openForm={() => setIsFormOpen(true)}
             />

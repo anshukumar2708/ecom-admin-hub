@@ -9,6 +9,7 @@ export interface ISubCategoryParams {
     page?: number,
     limit?: number,
     isActive?: boolean
+    categoryId?: string
 }
 
 export interface ISubCategoryFormData {
@@ -16,6 +17,7 @@ export interface ISubCategoryFormData {
     slug: string,
     image: string,
     categoryId: string,
+    subCategoryId: string,
     description: string,
     isActive: boolean,
     displayOrder: number | null
@@ -29,6 +31,7 @@ export interface ISubCategory {
     image: string;
     description: string;
     categoryId: string;
+    subCategoryId: string;
     isActive: boolean;
     displayOrder: number | null
     createdAt: string;

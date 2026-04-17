@@ -1,5 +1,6 @@
 import { ICategoryFormData, ICategoryParams } from "@/types/product.category.type";
 import axiosInstance from "./axiosInstance"
+import { ISubCategoryParams } from "@/types/sub.category.type";
 
 // Product Categories
 export const addProductCategory = (payLoad: ICategoryFormData) => {
@@ -25,7 +26,7 @@ export const addSubCategory = (payLoad) => {
     return axiosInstance.post("/product/sub-category", payLoad);
 }
 
-export const getProductSubCategory = (params) => {
+export const getProductSubCategory = (params?: ISubCategoryParams) => {
     return axiosInstance.get("/product/sub-category", {
         params: params
     });
@@ -38,5 +39,6 @@ export const deleteProductSubCategory = (id:string) => {
 export const updateProductSubCategory = (id: string, payLoad: ICategoryFormData) => {
     return axiosInstance.patch(`/product/sub-category/${id}`, payLoad);
 }
+
 
 

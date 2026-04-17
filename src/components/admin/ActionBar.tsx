@@ -47,6 +47,18 @@ const ActionBar = ({ addBtnTitle, setFilter, openForm }: IProps) => {
                         onChange={(event) => setSearchQuery(event.target.value)}
                     />
                 </div>
+                {/* <Select defaultValue="all">
+                    <SelectTrigger className="w-40">
+                        <SelectValue placeholder="Category" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="all">All Categories</SelectItem>
+                        <SelectItem value="electronics">Electronics</SelectItem>
+                        <SelectItem value="footwear">Footwear</SelectItem>
+                        <SelectItem value="audio">Audio</SelectItem>
+                        <SelectItem value="wearables">Wearables</SelectItem>
+                    </SelectContent>
+                </Select> */}
                 <Select
                     defaultValue="all"
                     onValueChange={handleStatusFilter}
@@ -65,14 +77,14 @@ const ActionBar = ({ addBtnTitle, setFilter, openForm }: IProps) => {
                 </Button>
             </div>
             <div className="flex gap-2">
-                <Button variant="outline" className="gap-2">
+                {/* <Button variant="outline" className="gap-2">
                     <Upload className="h-4 w-4" />
                     Import
                 </Button>
                 <Button variant="outline" className="gap-2">
                     <Download className="h-4 w-4" />
                     Export
-                </Button>
+                </Button> */}
                 <Button className="gap-2" onClick={openForm}>
                     <Plus className="h-4 w-4" />
                     {addBtnTitle}
