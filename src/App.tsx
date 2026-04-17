@@ -17,6 +17,7 @@ import Brands from "./pages/Brands";
 import Category from "./pages/Category";
 import Login from "./pages/Login";
 import SubCategory from "./pages/SubCategory";
+import Colors from "./pages/Colors";
 
 const queryClient = new QueryClient();
 
@@ -28,11 +29,12 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Login />} />
+          <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/products/categories" element={<Category />} />
           <Route path="/products/sub-categories" element={<SubCategory />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/products" element={<Products />} />
           <Route path="/products/brands" element={<Brands />} />
+          <Route path="/products/colors" element={<Colors />} />
+          <Route path="/products" element={<Products />} />
           <Route path="/products/attributes" element={<Products />} />
           <Route path="/inventory" element={<Inventory />} />
           <Route path="/orders" element={<Orders />} />

@@ -7,11 +7,12 @@ import { ICategoryFilter } from '@/types/product.category.type';
 
 interface IProps {
     addBtnTitle: string;
+    searchPlaceholder?: string;
     setFilter: React.Dispatch<React.SetStateAction<ICategoryFilter>>;
     openForm: () => void;
 }
 
-const ActionBar = ({ addBtnTitle, setFilter, openForm }: IProps) => {
+const ActionBar = ({ addBtnTitle, searchPlaceholder, setFilter, openForm }: IProps) => {
     const [searchQuery, setSearchQuery] = useState<string>("");
 
     useEffect(() => {
@@ -41,7 +42,7 @@ const ActionBar = ({ addBtnTitle, setFilter, openForm }: IProps) => {
                 <div className="relative flex-1 max-w-md">
                     <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                     <Input
-                        placeholder="Search categories..."
+                        placeholder={searchPlaceholder || "Search..."}
                         className="pl-9"
                         value={searchQuery}
                         onChange={(event) => setSearchQuery(event.target.value)}

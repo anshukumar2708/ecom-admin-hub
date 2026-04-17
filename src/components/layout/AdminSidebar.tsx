@@ -45,6 +45,7 @@ const navigation: NavItem[] = [
       { title: "Categories", href: "/products/categories" },
       { title: "Sub Categories", href: "/products/sub-categories" },
       { title: "Brands", href: "/products/brands" },
+      { title: "Colors", href: "/products/colors" },
       // { title: "Attributes", href: "/products/attributes" },
     ],
   },
